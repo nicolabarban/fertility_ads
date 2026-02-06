@@ -159,12 +159,16 @@ function highlightText(text, matchedPatterns) {
 }
 
 function parseJsonPath(value) {
-  const text = value || "";
+  const text = (value || "").trim();
   const lccnMatch = text.match(/sn\\d{8}/i);
+  const lccnFromParts = text
+    .split(/[\\/_]/)
+    .map((part) => part.trim())
+    .find((part) => /^sn\\d{8}$/i.test(part));
   const dateMatch = text.match(/(\\d{4}-\\d{2}-\\d{2})/);
   const pageMatch = text.match(/(?:^|_)p(\\d+)\\b/i);
   return {
-    lccn: lccnMatch ? lccnMatch[0].toLowerCase() : "",
+    lccn: lccnMatch ? lccnMatch[0].toLowerCase() : (lccnFromParts ? lccnFromParts.toLowerCase() : ""),
     date: dateMatch ? dateMatch[1] : "",
     page: pageMatch ? pageMatch[1] : ""
   };
