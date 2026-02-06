@@ -11,6 +11,7 @@ const PORT = process.env.PORT || 3000;
 const DATA_PATH = path.join(__dirname, "data", "sample200.csv");
 const OCR_PROMPT_PATH = path.join(__dirname, "prompts", "ocr_ad_prompt.txt");
 const REPRO_PROMPT_PATH = path.join(__dirname, "prompts", "repro_classify_prompt.txt");
+const GROUND_TRUTH_PATH = path.join(__dirname, "data", "ground_truth.csv");
 
 const app = express();
 app.use(express.json({ limit: "2mb" }));
@@ -112,6 +113,24 @@ function extractOutputText(response) {
   return parts.join("").trim();
 }
 
+function csvEscape(value) {
+  const str = value === undefined || value === null ? "" : String(value);
+  if (/[",\n]/.test(str)) {
+    return `"${str.replace(/"/g, "\"\"")}"`;
+  }
+  return str;
+}
+
+function ensureGroundTruthFile() {
+  if (!fs.existsSync(GROUND_TRUTH_PATH)) {
+    fs.writeFileSync(
+      GROUND_TRUTH_PATH,
+      "timestamp,json_path,year,full_article_id,block_id,manual_label\n",
+      "utf-8"
+    );
+  }
+}
+
 app.get("/api/rows", (req, res) => {
   try {
     const rows = getRows();
@@ -170,6 +189,32 @@ app.post("/api/repro-classify", async (req, res) => {
     res.json({ output: extractOutputText(response) });
   } catch (err) {
     res.status(500).json({ error: "OpenAI request failed" });
+  }
+});
+
+app.post("/api/ground-truth", (req, res) => {
+  const allowed = new Set(["ADS_REPRO", "ART", "OTHER", "UNCLEAR"]);
+  const label = (req.body && req.body.label) || "";
+  if (!allowed.has(label)) {
+    res.status(400).json({ error: "Invalid label" });
+    return;
+  }
+
+  try {
+    ensureGroundTruthFile();
+    const timestamp = new Date().toISOString();
+    const line = [
+      timestamp,
+      (req.body && req.body.json_path) || "",
+      (req.body && req.body.year) || "",
+      (req.body && req.body.full_article_id) || "",
+      (req.body && req.body.block_id) || "",
+      label
+    ].map(csvEscape).join(",") + "\n";
+    fs.appendFileSync(GROUND_TRUTH_PATH, line, "utf-8");
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to save label" });
   }
 });
 
