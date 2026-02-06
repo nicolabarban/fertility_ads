@@ -52,6 +52,23 @@ body {
   border-radius: 999px;
 }
 
+.notice {
+  margin: 0 40px 10px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px dashed var(--stroke);
+  background: #fff4e3;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.notice a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+
 .layout {
   display: grid;
   grid-template-columns: 320px 1fr;
