@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>fertility_ads</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <div class="kicker">fertility_ads</div>
+        <h1>Historical Newspaper OCR + Ad Classification</h1>
+      </div>
+      <div class="top-actions">
+        <div class="badge" id="rowCount">Loading rows...</div>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Articles</h2>
+          <input id="searchInput" type="search" placeholder="Search json_path, year, id" />
+        </div>
+        <div class="list" id="rowList"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Selected Article</h2>
+          <div class="meta" id="articleMeta">Select an item</div>
+        </div>
+        <div class="window" id="articleWindow">
+          <div id="articleText" class="article-text">Loading...</div>
+        </div>
+        <div class="actions">
+          <button id="btnCleanAd">Clean OCR + ADVERTISEMENT label</button>
+          <button id="btnRepro">Classify ADS_REPRO vs ART vs OTHER</button>
+        </div>
+        <div class="outputs">
+          <div class="output">
+            <div class="output-header">OCR + ADVERTISEMENT</div>
+            <div class="window small" id="ocrWindow">
+              <pre id="ocrOutput">Run a classification to see output.</pre>
+            </div>
+          </div>
+          <div class="output">
+            <div class="output-header">ADS_REPRO / ART / OTHER</div>
+            <div class="window small" id="reproWindow">
+              <pre id="reproOutput">Run a classification to see output.</pre>
+            </div>
+          </div>
+        </div>
+        <div class="status" id="status"></div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
