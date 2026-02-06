@@ -162,12 +162,24 @@ function parseJsonPath(value) {
   const text = value || "";
   const lccnMatch = text.match(/sn\\d{8}/i);
   const dateMatch = text.match(/(\\d{4}-\\d{2}-\\d{2})/);
-  const pageMatch = text.match(/_p(\\d+)\\b/i);
+  const pageMatch = text.match(/(?:^|_)p(\\d+)\\b/i);
   return {
     lccn: lccnMatch ? lccnMatch[0].toLowerCase() : "",
     date: dateMatch ? dateMatch[1] : "",
     page: pageMatch ? pageMatch[1] : ""
   };
+}
+
+function extractMetaFromRow(row) {
+  const sources = [row.json_path, row.full_article_id, row.block_id].filter(Boolean);
+  const parsed = { lccn: "", date: "", page: "" };
+  sources.forEach((source) => {
+    const next = parseJsonPath(source);
+    if (!parsed.lccn && next.lccn) parsed.lccn = next.lccn;
+    if (!parsed.date && next.date) parsed.date = next.date;
+    if (!parsed.page && next.page) parsed.page = next.page;
+  });
+  return parsed;
 }
 
 function renderList() {
@@ -198,12 +210,17 @@ function selectRow(row) {
 }
 
 function updateNewspaperInfo(row) {
-  const parsed = parseJsonPath(row.json_path || "");
+  const parsed = extractMetaFromRow(row);
   const lccn = parsed.lccn;
   const info = lccn ? state.lccnMap[lccn] : null;
 
   if (!info) {
-    newspaperInfo.textContent = lccn ? `LCCN ${lccn} not found in Chronicling America data.` : "No LCCN detected in json_path.";
+    if (!lccn) {
+      const path = row.json_path ? escapeHtml(row.json_path) : "(empty json_path)";
+      newspaperInfo.innerHTML = `No LCCN detected in json_path: ${path}`;
+    } else {
+      newspaperInfo.textContent = `LCCN ${lccn} not found in Chronicling America data.`;
+    }
     return;
   }
 
