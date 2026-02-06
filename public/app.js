@@ -11,6 +11,9 @@ const reproExplanation = document.getElementById("reproExplanation");
 const statusEl = document.getElementById("status");
 const btnCleanAd = document.getElementById("btnCleanAd");
 const btnRepro = document.getElementById("btnRepro");
+const manualLabel = document.getElementById("manualLabel");
+const saveManual = document.getElementById("saveManual");
+const manualStatus = document.getElementById("manualStatus");
 
 const state = {
   rows: [],
@@ -22,6 +25,10 @@ const state = {
 
 function setStatus(message) {
   statusEl.textContent = message;
+}
+
+function setManualStatus(message) {
+  manualStatus.textContent = message;
 }
 
 function parseCSV(text) {
@@ -425,6 +432,38 @@ btnRepro.addEventListener("click", async () => {
   }
 
   reproExplanation.textContent = explanation || output.trim();
+});
+
+saveManual.addEventListener("click", async () => {
+  if (!state.selected) return;
+  const label = manualLabel.value;
+  if (!label) {
+    setManualStatus("Select a label first.");
+    return;
+  }
+  setManualStatus("Saving...");
+  const res = await fetch("api/ground-truth", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      label,
+      json_path: state.selected.json_path || "",
+      year: state.selected.year || "",
+      full_article_id: state.selected.full_article_id || "",
+      block_id: state.selected.block_id || ""
+    })
+  });
+  let data = null;
+  try {
+    data = await res.json();
+  } catch (err) {
+    data = null;
+  }
+  if (!res.ok) {
+    setManualStatus((data && data.error) || "Failed to save.");
+    return;
+  }
+  setManualStatus("Saved.");
 });
 
 searchInput.addEventListener("input", applyFilter);
