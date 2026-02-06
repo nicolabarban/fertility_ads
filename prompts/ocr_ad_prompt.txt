@@ -14,19 +14,7 @@ Task:
    - Correct OCR errors in dates, personal names, and place names when context makes the intended form clear; otherwise provide the best historically plausible reading.
    - When a word is badly corrupted or ambiguous, choose the most contextually plausible historical reconstruction; do NOT insert placeholders like "[?]".
 
-2. After the cleaned text, give an advertisement classification:
-   - Output exactly one label: "yes", "no", or "unclear".
-   - "ADVERTISEMENT" = yes when the text is:
-       - a solicitation to transact (sell, buy, lease, hire, subscribe, attend), OR
-       - promotional or persuasive text recommending a product, service, business, or event, OR
-       - a list or descriptive catalogue of products, goods, or services from a merchant or establishment.
-   - Advertising cues include: for sale, to let, wanted, apply to, agents wanted, sold by, orders received, subscribe, tickets/admission, auction/sale, clearance, grand opening, new arrivals, patented, guaranteed, best quality, made by, available from, testimonials, catalog-like product lists, brand or merchant identifiers, etc.
-   - Label "no" when the text is purely informational (e.g., news, reports, obituaries, editorials) with no promotional intent.
-   - Use "unclear" only if no cues are present AND the fragment is too incomplete to judge.
-   - When in doubt, prefer "yes" to avoid false negatives.
-
 Return format:
 - Cleaned text only.
-- Final line must be exactly: ADVERTISEMENT: yes|no|unclear
-- After writing the line "ADVERTISEMENT: ...", STOP. Do not output anything else.
+- After outputting the cleaned text, STOP. Do not output anything else.
 - Do not explain your reasoning. Do not add headings or commentary. Do not repeat the prompt. Do not include XML-like tags or <think> sections.
