@@ -220,6 +220,47 @@ mark {
   margin-bottom: 6px;
 }
 
+.repro-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.repro-label {
+  align-self: flex-start;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--stroke);
+  background: #f4efe8;
+}
+
+.repro-label[data-label="ADS_REPRO"] {
+  background: #b5472f;
+  color: #fff;
+  border-color: #b5472f;
+}
+
+.repro-label[data-label="ART"] {
+  background: #2f5fb5;
+  color: #fff;
+  border-color: #2f5fb5;
+}
+
+.repro-label[data-label="OTHER"] {
+  background: #4c4c4c;
+  color: #fff;
+  border-color: #4c4c4c;
+}
+
+.repro-explain {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
 .status {
   font-family: "Space Grotesk", sans-serif;
   font-size: 12px;
