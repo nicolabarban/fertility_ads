@@ -26,7 +26,11 @@ LABEL DEFINITIONS
 - METAPHORS: "An abortion of a plan" is OTHER.
 
 OUTPUT FORMAT
-Return ONLY the label. No preamble, no explanation.
+Return:
+- First line: the label only (ADS_REPRO, ART, or OTHER).
+- Then a blank line.
+- Then a concise explanation (max 150 words) explaining why this label fits the text.
+No other text.
 
 ---------------------------------------------------------------
 FEW-SHOT EXAMPLES
