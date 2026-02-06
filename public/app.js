@@ -19,6 +19,65 @@ function setStatus(message) {
   statusEl.textContent = message;
 }
 
+function parseCSV(text) {
+  const rows = [];
+  let row = [];
+  let field = "";
+  let inQuotes = false;
+
+  for (let i = 0; i < text.length; i += 1) {
+    const char = text[i];
+    const next = text[i + 1];
+
+    if (inQuotes) {
+      if (char === "\"") {
+        if (next === "\"") {
+          field += "\"";
+          i += 1;
+        } else {
+          inQuotes = false;
+        }
+      } else {
+        field += char;
+      }
+    } else {
+      if (char === "\"") {
+        inQuotes = true;
+      } else if (char === ",") {
+        row.push(field);
+        field = "";
+      } else if (char === "\n") {
+        row.push(field);
+        rows.push(row);
+        row = [];
+        field = "";
+      } else if (char === "\r") {
+        continue;
+      } else {
+        field += char;
+      }
+    }
+  }
+
+  if (field.length > 0 || row.length > 0) {
+    row.push(field);
+    rows.push(row);
+  }
+
+  return rows;
+}
+
+function csvToObjects(csvText) {
+  const [header, ...dataRows] = parseCSV(csvText);
+  return dataRows.map((cells, idx) => {
+    const obj = { _rowIndex: idx };
+    header.forEach((key, i) => {
+      obj[key] = cells[i] ?? "";
+    });
+    return obj;
+  });
+}
+
 function formatTitle(row) {
   const year = row.year || "n/a";
   const path = row.json_path || "(no json_path)";
@@ -137,9 +196,32 @@ function applyFilter() {
 
 async function loadRows() {
   setStatus("Loading CSV...");
-  const res = await fetch("/api/rows");
-  const data = await res.json();
-  state.rows = data.rows || [];
+  let rows = null;
+
+  try {
+    const res = await fetch("/api/rows");
+    if (res.ok) {
+      const data = await res.json();
+      rows = data.rows || [];
+    }
+  } catch (err) {
+    rows = null;
+  }
+
+  if (!rows) {
+    try {
+      const res = await fetch("/data/sample200.csv");
+      if (res.ok) {
+        const csvText = await res.text();
+        rows = csvToObjects(csvText);
+        setStatus("Loaded from static CSV (backend unavailable)");
+      }
+    } catch (err) {
+      rows = [];
+    }
+  }
+
+  state.rows = rows || [];
   state.filtered = [...state.rows];
   rowCount.textContent = `${state.rows.length} rows loaded`;
   if (state.rows.length > 0) {
@@ -159,13 +241,18 @@ async function postForOutput(endpoint) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ text: state.selected.article || "" })
   });
-  const data = await res.json();
+  let data = null;
+  try {
+    data = await res.json();
+  } catch (err) {
+    data = null;
+  }
   if (!res.ok) {
-    setStatus(data.error || "Request failed");
+    setStatus((data && data.error) || "Backend unavailable");
     return null;
   }
   setStatus("Done");
-  return data.output;
+  return data && data.output ? data.output : null;
 }
 
 btnCleanAd.addEventListener("click", async () => {
