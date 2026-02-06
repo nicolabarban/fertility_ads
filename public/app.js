@@ -221,9 +221,9 @@ function updateNewspaperInfo(row) {
   if (!info) {
     if (!lccn) {
       const path = row.json_path ? escapeHtml(row.json_path) : "(empty json_path)";
-      newspaperInfo.innerHTML = `No LCCN detected in json_path: ${path}`;
+      newspaperInfo.innerHTML = `<div class="meta-line"><span class="meta-label">Status</span><span class="meta-value">No LCCN detected in json_path: ${path}</span></div>`;
     } else {
-      newspaperInfo.textContent = `LCCN ${lccn} not found in Chronicling America data.`;
+      newspaperInfo.innerHTML = `<div class="meta-line"><span class="meta-label">Status</span><span class="meta-value">LCCN ${escapeHtml(lccn)} not found in Chronicling America data.</span></div>`;
     }
     return;
   }
@@ -241,18 +241,34 @@ function updateNewspaperInfo(row) {
     ? `https://chroniclingamerica.loc.gov/lccn/${lccn}/${parsed.date}/ed-1/seq-${parsed.page}/`
     : "";
 
-  const parts = [
-    info.newspaper ? `Newspaper: ${info.newspaper}` : null,
-    `LCCN: ${lccn}`,
-    parsed.date ? `Issue date: ${parsed.date}` : null,
-    parsed.page ? `Page: ${parsed.page}` : null,
-    info.city || info.state ? `City/State: ${[info.city, info.state].filter(Boolean).join(", ")}` : null,
-    years ? `Publication years: ${years}` : null,
-    pageLink ? `<a href="${pageLink}" target="_blank" rel="noreferrer">Chronicling America page (issue)</a>` : null,
-    info.browse_url ? `<a href="${info.browse_url}" target="_blank" rel="noreferrer">Browse issues</a>` : null
-  ].filter(Boolean);
+  const lines = [];
+  if (lccn) {
+    lines.push(`<div class="meta-line"><span class="meta-label">LCCN</span><span class="meta-value">${escapeHtml(lccn)}</span></div>`);
+  }
+  if (info.newspaper) {
+    lines.push(`<div class="meta-line"><span class="meta-label">Title</span><span class="meta-value">${escapeHtml(info.newspaper)}</span></div>`);
+  }
+  if (years) {
+    lines.push(`<div class="meta-line"><span class="meta-label">Dates of Publication</span><span class="meta-value">${escapeHtml(years)}</span></div>`);
+  }
+  if (parsed.date) {
+    lines.push(`<div class="meta-line"><span class="meta-label">Issue date</span><span class="meta-value">${escapeHtml(parsed.date)}</span></div>`);
+  }
+  if (parsed.page) {
+    lines.push(`<div class="meta-line"><span class="meta-label">Page</span><span class="meta-value">${escapeHtml(parsed.page)}</span></div>`);
+  }
+  if (info.city || info.state) {
+    const cityState = [info.city, info.state].filter(Boolean).join(", ");
+    lines.push(`<div class="meta-line"><span class="meta-label">City/State</span><span class="meta-value">${escapeHtml(cityState)}</span></div>`);
+  }
+  if (pageLink) {
+    lines.push(`<div class="meta-line"><span class="meta-label">Issue link</span><span class="meta-value"><a href="${pageLink}" target="_blank" rel="noreferrer">${escapeHtml(pageLink)}</a></span></div>`);
+  }
+  if (info.browse_url) {
+    lines.push(`<div class="meta-line"><span class="meta-label">Browse issues</span><span class="meta-value"><a href="${info.browse_url}" target="_blank" rel="noreferrer">${escapeHtml(info.browse_url)}</a></span></div>`);
+  }
 
-  newspaperInfo.innerHTML = parts.join(" | ");
+  newspaperInfo.innerHTML = lines.join("");
 }
 
 function applyFilter() {
