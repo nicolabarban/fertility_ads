@@ -8,7 +8,8 @@
   </head>
   <body>
     <header class="topbar">
-      <div>
+      <div class="brand">
+        <img class="logo" src="genpop-logo.png" alt="GenPop logo" />
         <div class="kicker">fertility_ads</div>
         <h1>Historical Newspaper OCR + Ad Classification</h1>
       </div>
@@ -43,6 +44,20 @@
         <div class="actions">
           <button id="btnCleanAd">Clean OCR (no ad label)</button>
           <button id="btnRepro">Classify ADS_REPRO vs ART vs OTHER</button>
+        </div>
+        <div class="manual">
+          <div class="manual-title">Manual Ground Truth</div>
+          <div class="manual-controls">
+            <select id="manualLabel">
+              <option value="">Select label...</option>
+              <option value="ADS_REPRO">ADS_REPRO</option>
+              <option value="ART">ART</option>
+              <option value="OTHER">OTHER</option>
+              <option value="UNCLEAR">UNCLEAR</option>
+            </select>
+            <button id="saveManual">Save Label</button>
+          </div>
+          <div class="manual-status" id="manualStatus"></div>
         </div>
         <div class="outputs">
           <div class="output">
