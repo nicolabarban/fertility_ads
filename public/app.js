@@ -199,7 +199,7 @@ async function loadRows() {
   let rows = null;
 
   try {
-    const res = await fetch("/api/rows");
+    const res = await fetch("api/rows");
     if (res.ok) {
       const data = await res.json();
       rows = data.rows || [];
@@ -210,7 +210,7 @@ async function loadRows() {
 
   if (!rows) {
     try {
-      const res = await fetch("/data/sample200.csv");
+      const res = await fetch("data/sample200.csv");
       if (res.ok) {
         const csvText = await res.text();
         rows = csvToObjects(csvText);
@@ -257,13 +257,13 @@ async function postForOutput(endpoint) {
 
 btnCleanAd.addEventListener("click", async () => {
   ocrOutput.textContent = "Running...";
-  const output = await postForOutput("/api/ocr-correct");
+  const output = await postForOutput("api/ocr-correct");
   if (output) ocrOutput.textContent = output;
 });
 
 btnRepro.addEventListener("click", async () => {
   reproOutput.textContent = "Running...";
-  const output = await postForOutput("/api/repro-classify");
+  const output = await postForOutput("api/repro-classify");
   if (output) reproOutput.textContent = output;
 });
 
