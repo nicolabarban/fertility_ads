@@ -4,7 +4,8 @@ const searchInput = document.getElementById("searchInput");
 const articleText = document.getElementById("articleText");
 const articleMeta = document.getElementById("articleMeta");
 const ocrOutput = document.getElementById("ocrOutput");
-const reproOutput = document.getElementById("reproOutput");
+const reproLabel = document.getElementById("reproLabel");
+const reproExplanation = document.getElementById("reproExplanation");
 const statusEl = document.getElementById("status");
 const btnCleanAd = document.getElementById("btnCleanAd");
 const btnRepro = document.getElementById("btnRepro");
@@ -262,9 +263,33 @@ btnCleanAd.addEventListener("click", async () => {
 });
 
 btnRepro.addEventListener("click", async () => {
-  reproOutput.textContent = "Running...";
+  reproLabel.textContent = "Running...";
+  reproLabel.removeAttribute("data-label");
+  reproExplanation.textContent = "Waiting for response...";
   const output = await postForOutput("api/repro-classify");
-  if (output) reproOutput.textContent = output;
+  if (!output) {
+    reproLabel.textContent = "Label: —";
+    reproExplanation.textContent = "No output received.";
+    return;
+  }
+
+  const lines = output.trim().split(/\r?\n/);
+  const label = (lines.shift() || "").trim();
+  while (lines.length && lines[0].trim() === "") {
+    lines.shift();
+  }
+  const explanation = lines.join("\n").trim();
+
+  if (label) {
+    const upper = label.toUpperCase();
+    reproLabel.textContent = upper;
+    reproLabel.dataset.label = upper;
+  } else {
+    reproLabel.textContent = "Label: —";
+    reproLabel.removeAttribute("data-label");
+  }
+
+  reproExplanation.textContent = explanation || output.trim();
 });
 
 searchInput.addEventListener("input", applyFilter);
