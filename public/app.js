@@ -158,6 +158,18 @@ function highlightText(text, matchedPatterns) {
   return html;
 }
 
+function parseJsonPath(value) {
+  const text = value || "";
+  const lccnMatch = text.match(/sn\\d{8}/i);
+  const dateMatch = text.match(/(\\d{4}-\\d{2}-\\d{2})/);
+  const pageMatch = text.match(/_p(\\d+)\\b/i);
+  return {
+    lccn: lccnMatch ? lccnMatch[0].toLowerCase() : "",
+    date: dateMatch ? dateMatch[1] : "",
+    page: pageMatch ? pageMatch[1] : ""
+  };
+}
+
 function renderList() {
   articleSelect.innerHTML = "";
   state.filtered.forEach((row) => {
@@ -186,8 +198,8 @@ function selectRow(row) {
 }
 
 function updateNewspaperInfo(row) {
-  const lccnMatch = (row.json_path || "").match(/sn\\d{8}/i);
-  const lccn = lccnMatch ? lccnMatch[0].toLowerCase() : "";
+  const parsed = parseJsonPath(row.json_path || "");
+  const lccn = parsed.lccn;
   const info = lccn ? state.lccnMap[lccn] : null;
 
   if (!info) {
@@ -204,11 +216,19 @@ function updateNewspaperInfo(row) {
     years = firstYear || lastYear || "";
   }
 
+  const pageLink = (parsed.date && parsed.page)
+    ? `https://chroniclingamerica.loc.gov/lccn/${lccn}/${parsed.date}/ed-1/seq-${parsed.page}/`
+    : "";
+
   const parts = [
     info.newspaper ? `Newspaper: ${info.newspaper}` : null,
+    `LCCN: ${lccn}`,
+    parsed.date ? `Issue date: ${parsed.date}` : null,
+    parsed.page ? `Page: ${parsed.page}` : null,
     info.city || info.state ? `City/State: ${[info.city, info.state].filter(Boolean).join(", ")}` : null,
     years ? `Publication years: ${years}` : null,
-    info.browse_url ? `<a href="${info.browse_url}" target="_blank" rel="noreferrer">Chronicling America page</a>` : null
+    pageLink ? `<a href="${pageLink}" target="_blank" rel="noreferrer">Chronicling America page (issue)</a>` : null,
+    info.browse_url ? `<a href="${info.browse_url}" target="_blank" rel="noreferrer">Browse issues</a>` : null
   ].filter(Boolean);
 
   newspaperInfo.innerHTML = parts.join(" | ");
