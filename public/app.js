@@ -238,7 +238,7 @@ function updateNewspaperInfo(row) {
   }
 
   const pageLink = (parsed.date && parsed.page)
-    ? `https://chroniclingamerica.loc.gov/lccn/${lccn}/${parsed.date}/ed-1/seq-${parsed.page}/`
+    ? `https://www.loc.gov/resource/${lccn}/${parsed.date}/ed-1/?sp=${parsed.page}`
     : "";
 
   const lines = [];
