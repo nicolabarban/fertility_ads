@@ -1,8 +1,10 @@
-const rowList = document.getElementById("rowList");
+const articleSelect = document.getElementById("articleSelect");
 const rowCount = document.getElementById("rowCount");
 const searchInput = document.getElementById("searchInput");
+const yearFilter = document.getElementById("yearFilter");
 const articleText = document.getElementById("articleText");
 const articleMeta = document.getElementById("articleMeta");
+const newspaperInfo = document.getElementById("newspaperInfo");
 const ocrOutput = document.getElementById("ocrOutput");
 const reproLabel = document.getElementById("reproLabel");
 const reproExplanation = document.getElementById("reproExplanation");
@@ -13,7 +15,9 @@ const btnRepro = document.getElementById("btnRepro");
 const state = {
   rows: [],
   filtered: [],
-  selected: null
+  selected: null,
+  rowByIndex: new Map(),
+  lccnMap: {}
 };
 
 function setStatus(message) {
@@ -155,16 +159,15 @@ function highlightText(text, matchedPatterns) {
 }
 
 function renderList() {
-  rowList.innerHTML = "";
+  articleSelect.innerHTML = "";
   state.filtered.forEach((row) => {
-    const button = document.createElement("button");
-    button.className = "row-item";
-    button.textContent = formatTitle(row);
+    const option = document.createElement("option");
+    option.value = row._rowIndex;
+    option.textContent = formatTitle(row);
     if (state.selected && state.selected._rowIndex === row._rowIndex) {
-      button.classList.add("active");
+      option.selected = true;
     }
-    button.addEventListener("click", () => selectRow(row));
-    rowList.appendChild(button);
+    articleSelect.appendChild(option);
   });
 }
 
@@ -178,11 +181,42 @@ function selectRow(row) {
     row.block_id ? `Block ID: ${row.block_id}` : null
   ].filter(Boolean);
   articleMeta.textContent = meta.join(" | ") || "No metadata";
+  updateNewspaperInfo(row);
   renderList();
+}
+
+function updateNewspaperInfo(row) {
+  const lccnMatch = (row.json_path || "").match(/sn\\d{8}/i);
+  const lccn = lccnMatch ? lccnMatch[0].toLowerCase() : "";
+  const info = lccn ? state.lccnMap[lccn] : null;
+
+  if (!info) {
+    newspaperInfo.textContent = lccn ? `LCCN ${lccn} not found in Chronicling America data.` : "No LCCN detected in json_path.";
+    return;
+  }
+
+  const firstYear = (info.first_issue || "").slice(0, 4);
+  const lastYear = (info.last_issue || "").slice(0, 4);
+  let years = "";
+  if (firstYear && lastYear) {
+    years = firstYear === lastYear ? firstYear : `${firstYear}–${lastYear}`;
+  } else {
+    years = firstYear || lastYear || "";
+  }
+
+  const parts = [
+    info.newspaper ? `Newspaper: ${info.newspaper}` : null,
+    info.city || info.state ? `City/State: ${[info.city, info.state].filter(Boolean).join(", ")}` : null,
+    years ? `Publication years: ${years}` : null,
+    info.browse_url ? `<a href="${info.browse_url}" target="_blank" rel="noreferrer">Chronicling America page</a>` : null
+  ].filter(Boolean);
+
+  newspaperInfo.innerHTML = parts.join(" | ");
 }
 
 function applyFilter() {
   const term = searchInput.value.trim().toLowerCase();
+  const year = yearFilter.value;
   if (!term) {
     state.filtered = [...state.rows];
   } else {
@@ -192,7 +226,49 @@ function applyFilter() {
         .some((value) => value.toString().toLowerCase().includes(term));
     });
   }
+  if (year && year !== "all") {
+    state.filtered = state.filtered.filter((row) => (row.year || "") === year);
+  }
+  const hasSelected = state.selected && state.filtered.some((row) => row._rowIndex === state.selected._rowIndex);
+  if (state.filtered.length === 0) {
+    articleText.textContent = "No rows found.";
+    articleMeta.textContent = "No metadata";
+    newspaperInfo.textContent = "";
+    renderList();
+    return;
+  }
+  if (!hasSelected) {
+    selectRow(state.filtered[0]);
+    return;
+  }
   renderList();
+}
+
+function updateYearOptions() {
+  const years = Array.from(new Set(state.rows.map((row) => row.year).filter(Boolean)));
+  years.sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
+  yearFilter.innerHTML = "";
+  const allOption = document.createElement("option");
+  allOption.value = "all";
+  allOption.textContent = "All years";
+  yearFilter.appendChild(allOption);
+  years.forEach((year) => {
+    const option = document.createElement("option");
+    option.value = year;
+    option.textContent = year;
+    yearFilter.appendChild(option);
+  });
+}
+
+async function loadLccnMap() {
+  try {
+    const res = await fetch("data/lccn_map.json");
+    if (!res.ok) return;
+    state.lccnMap = await res.json();
+    if (state.selected) updateNewspaperInfo(state.selected);
+  } catch (err) {
+    state.lccnMap = {};
+  }
 }
 
 async function loadRows() {
@@ -223,7 +299,9 @@ async function loadRows() {
   }
 
   state.rows = rows || [];
+  state.rowByIndex = new Map(state.rows.map((row) => [row._rowIndex, row]));
   state.filtered = [...state.rows];
+  updateYearOptions();
   rowCount.textContent = `${state.rows.length} rows loaded`;
   if (state.rows.length > 0) {
     selectRow(state.rows[0]);
@@ -293,7 +371,13 @@ btnRepro.addEventListener("click", async () => {
 });
 
 searchInput.addEventListener("input", applyFilter);
+yearFilter.addEventListener("change", applyFilter);
+articleSelect.addEventListener("change", (event) => {
+  const idx = Number(event.target.value);
+  const row = state.rowByIndex.get(idx);
+  if (row) selectRow(row);
+});
 
-loadRows().catch(() => {
+Promise.all([loadLccnMap(), loadRows()]).catch(() => {
   setStatus("Failed to load rows");
 });

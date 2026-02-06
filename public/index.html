@@ -25,9 +25,10 @@
       <section class="panel">
         <div class="panel-header">
           <h2>Articles</h2>
+          <select id="yearFilter"></select>
           <input id="searchInput" type="search" placeholder="Search json_path, year, id" />
         </div>
-        <div class="list" id="rowList"></div>
+        <select id="articleSelect" class="article-select"></select>
       </section>
 
       <section class="panel">
@@ -35,6 +36,7 @@
           <h2>Selected Article</h2>
           <div class="meta" id="articleMeta">Select an item</div>
         </div>
+        <div class="meta" id="newspaperInfo"></div>
         <div class="window" id="articleWindow">
           <div id="articleText" class="article-text">Loading...</div>
         </div>
