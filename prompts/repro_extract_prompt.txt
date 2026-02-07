@@ -4,15 +4,9 @@ Task:
 Extract the following fields ONLY if the text is an ADS_REPRO (human reproductive advertisement). If the document is not an ADS_REPRO, still return the JSON with all fields set to "Not present/unclear".
 
 Fields to extract:
-- product_name: Name of the product.
-- euphemism_used: Any euphemism used (e.g., "female obstructions").
-- price: Price or cost.
-- location: City/state/address or where to obtain it.
-- type: "clear advertisement" or "promotional article" or "unclear".
-- symptoms: Symptoms or conditions mentioned.
-- direction_of_use: Directions or dosage instructions.
-- health_warnings: Any warnings or cautions.
-- order_by_post: Whether ordering by post/mail is mentioned.
+- named_brands_and_lifecycles: Named brands and any product lifecycle details (e.g., "new", "improved", "latest", "patented", "established").
+- pricing: Pricing information if present.
+- distribution_channels: Distribution channels (e.g., mail-order, chemists/druggists, "discreet delivery", agents).
 
 Rules:
 - If a field is missing or unclear, use the exact string "Not present/unclear".
@@ -21,4 +15,4 @@ Rules:
 
 Output format:
 Return a single JSON object with exactly these keys:
-product_name, euphemism_used, price, location, type, symptoms, direction_of_use, health_warnings, order_by_post
+named_brands_and_lifecycles, pricing, distribution_channels

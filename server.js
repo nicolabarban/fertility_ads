@@ -145,6 +145,7 @@ app.post("/api/ocr-correct", async (req, res) => {
   if (!requireApiKey(res)) return;
 
   const text = (req.body && req.body.text) || "";
+  const model = (req.body && req.body.model) || process.env.OPENAI_MODEL || "gpt-4.1-mini";
   if (!text.trim()) {
     res.status(400).json({ error: "Missing text" });
     return;
@@ -153,7 +154,7 @@ app.post("/api/ocr-correct", async (req, res) => {
   try {
     const prompt = fs.readFileSync(OCR_PROMPT_PATH, "utf-8");
     const response = await openai.responses.create({
-      model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
+      model,
       input: [
         { role: "system", content: prompt },
         { role: "user", content: text }
@@ -171,6 +172,7 @@ app.post("/api/repro-classify", async (req, res) => {
   if (!requireApiKey(res)) return;
 
   const text = (req.body && req.body.text) || "";
+  const model = (req.body && req.body.model) || process.env.OPENAI_MODEL || "gpt-4.1-mini";
   if (!text.trim()) {
     res.status(400).json({ error: "Missing text" });
     return;
@@ -179,7 +181,7 @@ app.post("/api/repro-classify", async (req, res) => {
   try {
     const prompt = fs.readFileSync(REPRO_PROMPT_PATH, "utf-8");
     const response = await openai.responses.create({
-      model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
+      model,
       input: [
         { role: "system", content: prompt },
         { role: "user", content: text }
@@ -197,6 +199,7 @@ app.post("/api/repro-extract", async (req, res) => {
   if (!requireApiKey(res)) return;
 
   const text = (req.body && req.body.text) || "";
+  const model = (req.body && req.body.model) || process.env.OPENAI_MODEL || "gpt-4.1-mini";
   if (!text.trim()) {
     res.status(400).json({ error: "Missing text" });
     return;
@@ -205,7 +208,7 @@ app.post("/api/repro-extract", async (req, res) => {
   try {
     const prompt = fs.readFileSync(REPRO_EXTRACT_PROMPT_PATH, "utf-8");
     const response = await openai.responses.create({
-      model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
+      model,
       input: [
         { role: "system", content: prompt },
         { role: "user", content: text }
@@ -216,6 +219,27 @@ app.post("/api/repro-extract", async (req, res) => {
     res.json({ output: extractOutputText(response) });
   } catch (err) {
     res.status(500).json({ error: "OpenAI request failed" });
+  }
+});
+
+app.get("/api/ground-truth", (req, res) => {
+  try {
+    if (!fs.existsSync(GROUND_TRUTH_PATH)) {
+      res.json({ rows: [] });
+      return;
+    }
+    const csvText = fs.readFileSync(GROUND_TRUTH_PATH, "utf-8");
+    const [header, ...dataRows] = parseCSV(csvText);
+    const rows = dataRows.map((cells) => {
+      const obj = {};
+      header.forEach((key, i) => {
+        obj[key] = cells[i] ?? "";
+      });
+      return obj;
+    });
+    res.json({ rows });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to load ground truth" });
   }
 });
 
