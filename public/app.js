@@ -269,9 +269,8 @@ function updateNewspaperInfo(row) {
     lines.push(`<div class="meta-line"><span class="meta-label">City/State</span><span class="meta-value">${escapeHtml(cityState)}</span></div>`);
   }
   if (pageLink) {
-    lines.push(`<div class="meta-line"><span class="meta-label">Issue link</span><span class="meta-value"><a href="${pageLink}" target="_blank" rel="noreferrer">${escapeHtml(pageLink)}</a></span></div>`);
-  }
-  if (info.browse_url) {
+    lines.push(`<div class="meta-line"><span class="meta-label">Issue page link</span><span class="meta-value"><a href="${pageLink}" target="_blank" rel="noreferrer">${escapeHtml(pageLink)}</a></span></div>`);
+  } else if (info.browse_url) {
     lines.push(`<div class="meta-line"><span class="meta-label">Browse issues</span><span class="meta-value"><a href="${info.browse_url}" target="_blank" rel="noreferrer">${escapeHtml(info.browse_url)}</a></span></div>`);
   }
 
