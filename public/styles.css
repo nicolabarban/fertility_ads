@@ -298,6 +298,32 @@ mark {
   line-height: 1.6;
 }
 
+.extract-block {
+  display: grid;
+  gap: 8px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.extract-line {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 10px;
+  align-items: start;
+}
+
+.extract-label {
+  font-family: "Space Grotesk", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 11px;
+  color: #8a7f73;
+}
+
+.extract-value {
+  color: var(--ink);
+}
+
 .manual {
   border: 1px solid var(--stroke);
   border-radius: 12px;
