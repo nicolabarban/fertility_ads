@@ -198,6 +198,7 @@ function highlightText(text, matchedPatterns) {
 
 function parseJsonPath(value) {
   const text = (value || "").trim();
+  const combined = text.match(/(\d{4}-\d{2}-\d{2})_p(\d+)_sn(\d{8})/i);
   const lccnMatch = text.match(/sn\d{8}/i);
   const lccnFromParts = text
     .split(/[\\/_]/)
@@ -206,9 +207,10 @@ function parseJsonPath(value) {
   const dateMatch = text.match(/(\d{4}-\d{2}-\d{2})/);
   const pageMatch = text.match(/(?:^|_)p(\d+)\b/i);
   return {
-    lccn: lccnMatch ? lccnMatch[0].toLowerCase() : (lccnFromParts ? lccnFromParts.toLowerCase() : ""),
-    date: dateMatch ? dateMatch[1] : "",
-    page: pageMatch ? pageMatch[1] : ""
+    lccn: combined ? `sn${combined[3]}`.toLowerCase()
+      : (lccnMatch ? lccnMatch[0].toLowerCase() : (lccnFromParts ? lccnFromParts.toLowerCase() : "")),
+    date: combined ? combined[1] : (dateMatch ? dateMatch[1] : ""),
+    page: combined ? combined[2] : (pageMatch ? pageMatch[1] : "")
   };
 }
 
