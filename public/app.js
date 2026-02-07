@@ -67,7 +67,14 @@ function renderExtraction(output) {
   const fields = [
     ["Named brands & lifecycles", "named_brands_and_lifecycles"],
     ["Pricing", "pricing"],
-    ["Distribution channels", "distribution_channels"]
+    ["Distribution channels", "distribution_channels"],
+    ["Location (manufacturing)", "location_manufacturing"],
+    ["Location (purchase)", "location_purchase"],
+    ["Type", "type"],
+    ["Symptoms", "symptoms"],
+    ["Direction of use", "direction_of_use"],
+    ["Health warnings", "health_warnings"],
+    ["Order by post", "order_by_post"]
   ];
   const lines = fields.map(([label, key]) => {
     const value = data && data[key] ? data[key] : "Not present/unclear";
@@ -327,7 +334,8 @@ function renderList() {
   state.filtered.forEach((row) => {
     const option = document.createElement("option");
     option.value = row._rowIndex;
-    option.textContent = formatTitle(row);
+    const prefix = row.manual_label ? "✓ " : "";
+    option.textContent = `${prefix}${formatTitle(row)}`;
     if (state.selected && state.selected._rowIndex === row._rowIndex) {
       option.selected = true;
     }
@@ -557,7 +565,14 @@ async function postForOutput(endpoint) {
   const res = await fetch(endpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text: state.selected.article || "", model: getSelectedModel() })
+    body: JSON.stringify({
+      text: state.selected.article || "",
+      model: getSelectedModel(),
+      json_path: state.selected.json_path || "",
+      year: state.selected.year || "",
+      full_article_id: state.selected.full_article_id || "",
+      block_id: state.selected.block_id || ""
+    })
   });
   let data = null;
   try {

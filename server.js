@@ -13,6 +13,7 @@ const OCR_PROMPT_PATH = path.join(__dirname, "prompts", "ocr_ad_prompt.txt");
 const REPRO_PROMPT_PATH = path.join(__dirname, "prompts", "repro_classify_prompt.txt");
 const REPRO_EXTRACT_PROMPT_PATH = path.join(__dirname, "prompts", "repro_extract_prompt.txt");
 const GROUND_TRUTH_PATH = path.join(__dirname, "data", "ground_truth.csv");
+const REPRO_EXTRACT_PATH = path.join(__dirname, "data", "repro_extract.csv");
 
 const app = express();
 app.use(express.json({ limit: "2mb" }));
@@ -132,6 +133,16 @@ function ensureGroundTruthFile() {
   }
 }
 
+function ensureExtractFile() {
+  if (!fs.existsSync(REPRO_EXTRACT_PATH)) {
+    fs.writeFileSync(
+      REPRO_EXTRACT_PATH,
+      "timestamp,json_path,year,full_article_id,block_id,named_brands_and_lifecycles,pricing,distribution_channels,location_manufacturing,location_purchase,type,symptoms,direction_of_use,health_warnings,order_by_post,raw_output\n",
+      "utf-8"
+    );
+  }
+}
+
 app.get("/api/rows", (req, res) => {
   try {
     const rows = getRows();
@@ -216,7 +227,38 @@ app.post("/api/repro-extract", async (req, res) => {
       max_output_tokens: 500
     });
 
-    res.json({ output: extractOutputText(response) });
+    const output = extractOutputText(response);
+
+    try {
+      ensureExtractFile();
+      const parsed = (() => {
+        try { return JSON.parse(output); } catch { return null; }
+      })();
+      const fields = parsed || {};
+      const line = [
+        new Date().toISOString(),
+        (req.body && req.body.json_path) || "",
+        (req.body && req.body.year) || "",
+        (req.body && req.body.full_article_id) || "",
+        (req.body && req.body.block_id) || "",
+        fields.named_brands_and_lifecycles || "Not present/unclear",
+        fields.pricing || "Not present/unclear",
+        fields.distribution_channels || "Not present/unclear",
+        fields.location_manufacturing || "Not present/unclear",
+        fields.location_purchase || "Not present/unclear",
+        fields.type || "Not present/unclear",
+        fields.symptoms || "Not present/unclear",
+        fields.direction_of_use || "Not present/unclear",
+        fields.health_warnings || "Not present/unclear",
+        fields.order_by_post || "Not present/unclear",
+        output
+      ].map(csvEscape).join(",") + "\n";
+      fs.appendFileSync(REPRO_EXTRACT_PATH, line, "utf-8");
+    } catch (err) {
+      // If saving fails, still return output
+    }
+
+    res.json({ output });
   } catch (err) {
     res.status(500).json({ error: "OpenAI request failed" });
   }

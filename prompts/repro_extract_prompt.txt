@@ -7,6 +7,13 @@ Fields to extract:
 - named_brands_and_lifecycles: Named brands and any product lifecycle details (e.g., "new", "improved", "latest", "patented", "established").
 - pricing: Pricing information if present.
 - distribution_channels: Distribution channels (e.g., mail-order, chemists/druggists, "discreet delivery", agents).
+- location_manufacturing: Location where the product is manufactured (if stated).
+- location_purchase: Locations where the medicine can be bought (if stated).
+- type: "clear advertisement" or "promotional article" or "unclear".
+- symptoms: Symptoms or conditions mentioned.
+- direction_of_use: Directions or dosage instructions.
+- health_warnings: Any warnings or cautions.
+- order_by_post: Whether ordering by post/mail is mentioned.
 
 Rules:
 - If a field is missing or unclear, use the exact string "Not present/unclear".
@@ -15,4 +22,4 @@ Rules:
 
 Output format:
 Return a single JSON object with exactly these keys:
-named_brands_and_lifecycles, pricing, distribution_channels
+named_brands_and_lifecycles, pricing, distribution_channels, location_manufacturing, location_purchase, type, symptoms, direction_of_use, health_warnings, order_by_post
