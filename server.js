@@ -156,7 +156,7 @@ app.post("/api/ocr-correct", async (req, res) => {
   if (!requireApiKey(res)) return;
 
   const text = (req.body && req.body.text) || "";
-  const model = (req.body && req.body.model) || process.env.OPENAI_MODEL || "gpt-4.1-mini";
+  const model = (req.body && req.body.model) || process.env.OPENAI_MODEL || "gpt-5.2";
   if (!text.trim()) {
     res.status(400).json({ error: "Missing text" });
     return;
@@ -183,7 +183,7 @@ app.post("/api/repro-classify", async (req, res) => {
   if (!requireApiKey(res)) return;
 
   const text = (req.body && req.body.text) || "";
-  const model = (req.body && req.body.model) || process.env.OPENAI_MODEL || "gpt-4.1-mini";
+  const model = (req.body && req.body.model) || process.env.OPENAI_MODEL || "gpt-5.2";
   if (!text.trim()) {
     res.status(400).json({ error: "Missing text" });
     return;
@@ -210,7 +210,7 @@ app.post("/api/repro-extract", async (req, res) => {
   if (!requireApiKey(res)) return;
 
   const text = (req.body && req.body.text) || "";
-  const model = (req.body && req.body.model) || process.env.OPENAI_MODEL || "gpt-4.1-mini";
+  const model = (req.body && req.body.model) || process.env.OPENAI_MODEL || "gpt-5.2";
   if (!text.trim()) {
     res.status(400).json({ error: "Missing text" });
     return;

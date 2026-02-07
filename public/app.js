@@ -45,7 +45,7 @@ function setManualStatus(message) {
 function getSelectedModel() {
   const custom = modelInput.value.trim();
   if (custom) return custom;
-  return modelSelect.value || "gpt-4.1-mini";
+  return modelSelect.value || "gpt-5.2";
 }
 
 function normalizeLabel(value) {
@@ -335,7 +335,8 @@ function renderList() {
     const option = document.createElement("option");
     option.value = row._rowIndex;
     const prefix = row.manual_label ? "✓ " : "";
-    option.textContent = `${prefix}${formatTitle(row)}`;
+    const suffix = row.manual_label ? " [MANUAL]" : "";
+    option.textContent = `${prefix}${formatTitle(row)}${suffix}`;
     if (state.selected && state.selected._rowIndex === row._rowIndex) {
       option.selected = true;
     }
