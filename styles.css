@@ -63,6 +63,37 @@ body {
   border-radius: 999px;
 }
 
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.model-picker {
+  display: grid;
+  gap: 6px;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.model-label {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.model-picker select,
+.model-picker input {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--stroke);
+  background: #fff;
+  color: var(--ink);
+  min-width: 160px;
+}
+
 .notice {
   margin: 0 40px 10px;
   padding: 10px 14px;
@@ -372,6 +403,52 @@ mark {
   font-size: 12px;
   color: var(--muted);
   min-height: 16px;
+}
+
+.analysis-block {
+  border: 1px solid var(--stroke);
+  border-radius: 12px;
+  padding: 12px;
+  background: #fff;
+  display: grid;
+  gap: 10px;
+}
+
+.analysis-title {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--muted);
+}
+
+.analysis-controls select {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 12px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--stroke);
+  background: #fff;
+}
+
+.analysis-lines {
+  display: grid;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.analysis-line {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 10px;
+}
+
+.analysis-label {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 11px;
+  color: #8a7f73;
 }
 
 .status {
