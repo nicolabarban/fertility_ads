@@ -11,6 +11,7 @@ const PORT = process.env.PORT || 3000;
 const DATA_PATH = path.join(__dirname, "data", "sample200.csv");
 const OCR_PROMPT_PATH = path.join(__dirname, "prompts", "ocr_ad_prompt.txt");
 const REPRO_PROMPT_PATH = path.join(__dirname, "prompts", "repro_classify_prompt.txt");
+const REPRO_EXTRACT_PROMPT_PATH = path.join(__dirname, "prompts", "repro_extract_prompt.txt");
 const GROUND_TRUTH_PATH = path.join(__dirname, "data", "ground_truth.csv");
 
 const app = express();
@@ -184,6 +185,32 @@ app.post("/api/repro-classify", async (req, res) => {
         { role: "user", content: text }
       ],
       max_output_tokens: 50
+    });
+
+    res.json({ output: extractOutputText(response) });
+  } catch (err) {
+    res.status(500).json({ error: "OpenAI request failed" });
+  }
+});
+
+app.post("/api/repro-extract", async (req, res) => {
+  if (!requireApiKey(res)) return;
+
+  const text = (req.body && req.body.text) || "";
+  if (!text.trim()) {
+    res.status(400).json({ error: "Missing text" });
+    return;
+  }
+
+  try {
+    const prompt = fs.readFileSync(REPRO_EXTRACT_PROMPT_PATH, "utf-8");
+    const response = await openai.responses.create({
+      model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
+      input: [
+        { role: "system", content: prompt },
+        { role: "user", content: text }
+      ],
+      max_output_tokens: 500
     });
 
     res.json({ output: extractOutputText(response) });

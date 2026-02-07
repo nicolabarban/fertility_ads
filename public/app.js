@@ -8,6 +8,7 @@ const newspaperInfo = document.getElementById("newspaperInfo");
 const ocrOutput = document.getElementById("ocrOutput");
 const reproLabel = document.getElementById("reproLabel");
 const reproExplanation = document.getElementById("reproExplanation");
+const reproExtract = document.getElementById("reproExtract");
 const statusEl = document.getElementById("status");
 const btnCleanAd = document.getElementById("btnCleanAd");
 const btnRepro = document.getElementById("btnRepro");
@@ -29,6 +30,36 @@ function setStatus(message) {
 
 function setManualStatus(message) {
   manualStatus.textContent = message;
+}
+
+function renderExtraction(output) {
+  if (!output) {
+    reproExtract.textContent = "No extraction yet.";
+    return;
+  }
+  let data = null;
+  try {
+    data = JSON.parse(output);
+  } catch (err) {
+    reproExtract.textContent = output;
+    return;
+  }
+  const fields = [
+    ["Name of the product", "product_name"],
+    ["Euphemism used", "euphemism_used"],
+    ["Price", "price"],
+    ["Location", "location"],
+    ["Type", "type"],
+    ["Symptoms", "symptoms"],
+    ["Direction of use", "direction_of_use"],
+    ["Health warnings", "health_warnings"],
+    ["Order by post", "order_by_post"]
+  ];
+  const lines = fields.map(([label, key]) => {
+    const value = data && data[key] ? data[key] : "Not present/unclear";
+    return `<div class="extract-line"><span class="extract-label">${label}</span><span class="extract-value">${escapeHtml(String(value))}</span></div>`;
+  });
+  reproExtract.innerHTML = lines.join("");
 }
 
 function parseCSV(text) {
@@ -407,6 +438,7 @@ btnRepro.addEventListener("click", async () => {
   reproLabel.textContent = "Running...";
   reproLabel.removeAttribute("data-label");
   reproExplanation.textContent = "Waiting for response...";
+  reproExtract.textContent = "No extraction yet.";
   const output = await postForOutput("api/repro-classify");
   if (!output) {
     reproLabel.textContent = "Label: —";
@@ -425,12 +457,23 @@ btnRepro.addEventListener("click", async () => {
     const upper = label.toUpperCase();
     reproLabel.textContent = upper;
     reproLabel.dataset.label = upper;
+    if (upper === "ADS_REPRO") {
+      reproExplanation.textContent = explanation || output.trim();
+      const extractOutput = await postForOutput("api/repro-extract");
+      if (extractOutput) {
+        renderExtraction(extractOutput);
+      } else {
+        reproExtract.textContent = "Extraction failed.";
+      }
+      return;
+    }
   } else {
     reproLabel.textContent = "Label: —";
     reproLabel.removeAttribute("data-label");
   }
 
   reproExplanation.textContent = explanation || output.trim();
+  reproExtract.textContent = "Not ADS_REPRO.";
 });
 
 saveManual.addEventListener("click", async () => {
