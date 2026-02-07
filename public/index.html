@@ -15,6 +15,20 @@
       </div>
       <div class="top-actions">
         <div class="badge" id="rowCount">Loading rows...</div>
+        <div class="model-picker">
+          <div class="model-label">Model</div>
+          <select id="modelSelect">
+            <option value="gpt-4.1-mini">gpt-4.1-mini</option>
+            <option value="gpt-4.1">gpt-4.1</option>
+            <option value="gpt-4.1-nano">gpt-4.1-nano</option>
+            <option value="gpt-4o">gpt-4o</option>
+            <option value="gpt-4o-mini">gpt-4o-mini</option>
+            <option value="gpt-5.2">gpt-5.2</option>
+            <option value="gpt-5.2-mini">gpt-5.2-mini</option>
+            <option value="gpt-5.2-nano">gpt-5.2-nano</option>
+          </select>
+          <input id="modelInput" type="text" placeholder="Custom model id" />
+        </div>
       </div>
     </header>
     <div class="notice">
@@ -58,6 +72,21 @@
             <button id="saveManual">Save Label</button>
           </div>
           <div class="manual-status" id="manualStatus"></div>
+        </div>
+        <div class="analysis-block">
+          <div class="analysis-title">Model Classifications</div>
+          <div class="analysis-lines" id="modelLabels">No model labels loaded.</div>
+        </div>
+        <div class="analysis-block">
+          <div class="analysis-title">Accuracy</div>
+          <div class="analysis-controls">
+            <select id="groundTruthSelect">
+              <option value="manual">Manual ground truth</option>
+              <option value="gemini">Gemini (output200_g1)</option>
+              <option value="gpt">GPT5.2 nano-flash (output200)</option>
+            </select>
+          </div>
+          <div class="analysis-lines" id="accuracyStats">No accuracy yet.</div>
         </div>
         <div class="outputs">
           <div class="output">

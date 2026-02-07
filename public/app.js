@@ -15,13 +15,23 @@ const btnRepro = document.getElementById("btnRepro");
 const manualLabel = document.getElementById("manualLabel");
 const saveManual = document.getElementById("saveManual");
 const manualStatus = document.getElementById("manualStatus");
+const modelSelect = document.getElementById("modelSelect");
+const modelInput = document.getElementById("modelInput");
+const modelLabels = document.getElementById("modelLabels");
+const groundTruthSelect = document.getElementById("groundTruthSelect");
+const accuracyStats = document.getElementById("accuracyStats");
 
 const state = {
   rows: [],
   filtered: [],
   selected: null,
   rowByIndex: new Map(),
-  lccnMap: {}
+  lccnMap: {},
+  classifications: {
+    gemini: {},
+    gpt: {}
+  },
+  groundTruth: {}
 };
 
 function setStatus(message) {
@@ -30,6 +40,16 @@ function setStatus(message) {
 
 function setManualStatus(message) {
   manualStatus.textContent = message;
+}
+
+function getSelectedModel() {
+  const custom = modelInput.value.trim();
+  if (custom) return custom;
+  return modelSelect.value || "gpt-4.1-mini";
+}
+
+function normalizeLabel(value) {
+  return (value || "").toString().trim().toUpperCase();
 }
 
 function renderExtraction(output) {
@@ -45,15 +65,9 @@ function renderExtraction(output) {
     return;
   }
   const fields = [
-    ["Name of the product", "product_name"],
-    ["Euphemism used", "euphemism_used"],
-    ["Price", "price"],
-    ["Location", "location"],
-    ["Type", "type"],
-    ["Symptoms", "symptoms"],
-    ["Direction of use", "direction_of_use"],
-    ["Health warnings", "health_warnings"],
-    ["Order by post", "order_by_post"]
+    ["Named brands & lifecycles", "named_brands_and_lifecycles"],
+    ["Pricing", "pricing"],
+    ["Distribution channels", "distribution_channels"]
   ];
   const lines = fields.map(([label, key]) => {
     const value = data && data[key] ? data[key] : "Not present/unclear";
@@ -119,6 +133,88 @@ function csvToObjects(csvText) {
     });
     return obj;
   });
+}
+
+function detectLabelKey(sample) {
+  if (!sample) return "";
+  if (sample.Gemini_classification !== undefined) return "Gemini_classification";
+  const key = Object.keys(sample).find((k) => k.toLowerCase().includes("classification"));
+  return key || "";
+}
+
+function buildLabelMap(rows) {
+  const labelKey = detectLabelKey(rows[0]);
+  const map = {};
+  rows.forEach((row) => {
+    if (!row.json_path) return;
+    const label = labelKey ? row[labelKey] : "";
+    map[row.json_path] = normalizeLabel(label);
+  });
+  return map;
+}
+
+function attachClassificationToRows() {
+  if (!state.rows.length) return;
+  state.rows.forEach((row) => {
+    const path = row.json_path;
+    row.gemini_label = state.classifications.gemini[path] || "";
+    row.gpt_label = state.classifications.gpt[path] || "";
+    row.manual_label = state.groundTruth[path] || "";
+  });
+}
+
+function updateModelLabels(row) {
+  if (!row) {
+    modelLabels.textContent = "No model labels loaded.";
+    return;
+  }
+  const lines = [
+    ["Gemini (g1)", row.gemini_label || "Not available"],
+    ["GPT5.2 nano-flash", row.gpt_label || "Not available"],
+    ["Manual label", row.manual_label || "Not labeled"]
+  ];
+  modelLabels.innerHTML = lines.map(([label, value]) => (
+    `<div class="analysis-line"><span class="analysis-label">${label}</span><span>${escapeHtml(value)}</span></div>`
+  )).join("");
+}
+
+function computeAccuracy(gtMap, predMap) {
+  let total = 0;
+  let correct = 0;
+  Object.keys(gtMap).forEach((key) => {
+    const gt = normalizeLabel(gtMap[key]);
+    const pred = normalizeLabel(predMap[key]);
+    if (!gt || !pred) return;
+    total += 1;
+    if (gt === pred) correct += 1;
+  });
+  return { total, correct, accuracy: total ? (correct / total) : 0 };
+}
+
+function getGroundTruthMap(source) {
+  if (source === "gemini") return state.classifications.gemini;
+  if (source === "gpt") return state.classifications.gpt;
+  return state.groundTruth;
+}
+
+function updateAccuracy() {
+  const source = groundTruthSelect.value;
+  const gtMap = getGroundTruthMap(source);
+  if (!gtMap || Object.keys(gtMap).length === 0) {
+    accuracyStats.textContent = "No ground truth data available.";
+    return;
+  }
+
+  const geminiAcc = computeAccuracy(gtMap, state.classifications.gemini);
+  const gptAcc = computeAccuracy(gtMap, state.classifications.gpt);
+  const lines = [
+    ["Ground truth source", source],
+    ["Gemini accuracy", `${(geminiAcc.accuracy * 100).toFixed(1)}% (${geminiAcc.correct}/${geminiAcc.total})`],
+    ["GPT5.2 accuracy", `${(gptAcc.accuracy * 100).toFixed(1)}% (${gptAcc.correct}/${gptAcc.total})`]
+  ];
+  accuracyStats.innerHTML = lines.map(([label, value]) => (
+    `<div class="analysis-line"><span class="analysis-label">${label}</span><span>${escapeHtml(value)}</span></div>`
+  )).join("");
 }
 
 function formatTitle(row) {
@@ -250,6 +346,7 @@ function selectRow(row) {
   ].filter(Boolean);
   articleMeta.textContent = meta.join(" | ") || "No metadata";
   updateNewspaperInfo(row);
+  updateModelLabels(row);
   renderList();
 }
 
@@ -367,6 +464,50 @@ async function loadLccnMap() {
   }
 }
 
+async function loadClassifications() {
+  const loadCsv = async (path) => {
+    const res = await fetch(path);
+    if (!res.ok) return [];
+    const text = await res.text();
+    return csvToObjects(text);
+  };
+
+  try {
+    const [gptRows, geminiRows] = await Promise.all([
+      loadCsv("data/output200.csv"),
+      loadCsv("data/output200_g1.csv")
+    ]);
+    state.classifications.gpt = buildLabelMap(gptRows);
+    state.classifications.gemini = buildLabelMap(geminiRows);
+    attachClassificationToRows();
+    if (state.selected) updateModelLabels(state.selected);
+    updateAccuracy();
+  } catch (err) {
+    state.classifications.gpt = {};
+    state.classifications.gemini = {};
+  }
+}
+
+async function loadGroundTruth() {
+  try {
+    const res = await fetch("api/ground-truth");
+    if (!res.ok) return;
+    const data = await res.json();
+    const rows = data.rows || [];
+    const map = {};
+    rows.forEach((row) => {
+      if (!row.json_path) return;
+      map[row.json_path] = normalizeLabel(row.manual_label);
+    });
+    state.groundTruth = map;
+    attachClassificationToRows();
+    if (state.selected) updateModelLabels(state.selected);
+    updateAccuracy();
+  } catch (err) {
+    state.groundTruth = {};
+  }
+}
+
 async function loadRows() {
   setStatus("Loading CSV...");
   let rows = null;
@@ -396,6 +537,7 @@ async function loadRows() {
 
   state.rows = rows || [];
   state.rowByIndex = new Map(state.rows.map((row) => [row._rowIndex, row]));
+  attachClassificationToRows();
   state.filtered = [...state.rows];
   updateYearOptions();
   rowCount.textContent = `${state.rows.length} rows loaded`;
@@ -406,6 +548,7 @@ async function loadRows() {
   }
   renderList();
   setStatus("");
+  updateAccuracy();
 }
 
 async function postForOutput(endpoint) {
@@ -414,7 +557,7 @@ async function postForOutput(endpoint) {
   const res = await fetch(endpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text: state.selected.article || "" })
+    body: JSON.stringify({ text: state.selected.article || "", model: getSelectedModel() })
   });
   let data = null;
   try {
@@ -507,17 +650,25 @@ saveManual.addEventListener("click", async () => {
     setManualStatus((data && data.error) || "Failed to save.");
     return;
   }
+  const path = state.selected.json_path || "";
+  if (path) {
+    state.groundTruth[path] = normalizeLabel(label);
+    state.selected.manual_label = normalizeLabel(label);
+    updateModelLabels(state.selected);
+    updateAccuracy();
+  }
   setManualStatus("Saved.");
 });
 
 searchInput.addEventListener("input", applyFilter);
 yearFilter.addEventListener("change", applyFilter);
+groundTruthSelect.addEventListener("change", updateAccuracy);
 articleSelect.addEventListener("change", (event) => {
   const idx = Number(event.target.value);
   const row = state.rowByIndex.get(idx);
   if (row) selectRow(row);
 });
 
-Promise.all([loadLccnMap(), loadRows()]).catch(() => {
+Promise.all([loadLccnMap(), loadClassifications(), loadGroundTruth(), loadRows()]).catch(() => {
   setStatus("Failed to load rows");
 });
