@@ -201,6 +201,25 @@ function ensureExtractFile() {
   }
 }
 
+function formatSheetsError(err) {
+  if (!err) return "Unknown error";
+  const code = err.code || err.status || err.response?.status;
+  const message =
+    err.response?.data?.error?.message ||
+    err.message ||
+    "Unknown error";
+  if (code === 403) {
+    return `Permission denied (403). Share the sheet with the service account email. Details: ${message}`;
+  }
+  if (code === 404) {
+    return `Not found (404). Check GOOGLE_SHEETS_ID or tab name. Details: ${message}`;
+  }
+  if (code === 400) {
+    return `Bad request (400). Check GOOGLE_SHEETS_TAB and range. Details: ${message}`;
+  }
+  return `Error${code ? ` (${code})` : ""}: ${message}`;
+}
+
 app.get("/api/rows", (req, res) => {
   try {
     const rows = getRows();
@@ -208,6 +227,32 @@ app.get("/api/rows", (req, res) => {
   } catch (err) {
     res.status(500).json({ error: "Failed to load CSV" });
   }
+});
+
+app.get("/api/ground-truth/health", (req, res) => {
+  (async () => {
+    try {
+      if (!SHEETS_ID || !SERVICE_ACCOUNT_JSON) {
+        res.status(500).json({
+          ok: false,
+          error: "Google Sheets not configured. Set GOOGLE_SHEETS_ID and GOOGLE_SERVICE_ACCOUNT_JSON."
+        });
+        return;
+      }
+      const sheets = getSheetsClient();
+      if (!sheets) {
+        res.status(500).json({ ok: false, error: "Failed to initialize Google Sheets client." });
+        return;
+      }
+      await sheets.spreadsheets.values.get({
+        spreadsheetId: SHEETS_ID,
+        range: `${SHEETS_TAB}!A1`
+      });
+      res.json({ ok: true, message: "Google Sheets connection OK." });
+    } catch (err) {
+      res.status(500).json({ ok: false, error: formatSheetsError(err) });
+    }
+  })();
 });
 
 app.post("/api/ocr-correct", async (req, res) => {
