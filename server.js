@@ -167,6 +167,34 @@ function getSheetsClient() {
   return sheetsClient;
 }
 
+function diagnoseSheetsConfig() {
+  const status = {
+    hasSheetsId: Boolean(SHEETS_ID),
+    hasServiceJson: Boolean(SERVICE_ACCOUNT_JSON),
+    parseOk: false,
+    hasClientEmail: false,
+    hasPrivateKey: false,
+    error: ""
+  };
+  if (!status.hasSheetsId || !status.hasServiceJson) {
+    status.error = "Missing GOOGLE_SHEETS_ID or GOOGLE_SERVICE_ACCOUNT_JSON.";
+    return status;
+  }
+  try {
+    const raw = SERVICE_ACCOUNT_JSON.replace(/\\n/g, "\n");
+    const creds = JSON.parse(raw);
+    status.parseOk = true;
+    status.hasClientEmail = Boolean(creds.client_email);
+    status.hasPrivateKey = Boolean(creds.private_key);
+    if (!status.hasClientEmail || !status.hasPrivateKey) {
+      status.error = "Service account JSON missing client_email or private_key.";
+    }
+  } catch (err) {
+    status.error = "Failed to parse GOOGLE_SERVICE_ACCOUNT_JSON. Ensure it is a single-line JSON string.";
+  }
+  return status;
+}
+
 async function appendGroundTruthToSheet(row) {
   const sheets = getSheetsClient();
   if (!sheets) {
@@ -241,10 +269,12 @@ app.get("/api/rows", (req, res) => {
 app.get("/api/ground-truth/health", (req, res) => {
   (async () => {
     try {
-      if (!SHEETS_ID || !SERVICE_ACCOUNT_JSON) {
+      const config = diagnoseSheetsConfig();
+      if (!config.hasSheetsId || !config.hasServiceJson || !config.parseOk || !config.hasClientEmail || !config.hasPrivateKey) {
         res.status(500).json({
           ok: false,
-          error: "Google Sheets not configured. Set GOOGLE_SHEETS_ID and GOOGLE_SERVICE_ACCOUNT_JSON."
+          error: config.error || "Google Sheets not configured.",
+          config
         });
         return;
       }
@@ -260,9 +290,10 @@ app.get("/api/ground-truth/health", (req, res) => {
         spreadsheetId: SHEETS_ID,
         range: `${SHEETS_TAB}!A1`
       });
-      res.json({ ok: true, message: "Google Sheets connection OK." });
+      res.json({ ok: true, message: "Google Sheets connection OK.", config });
     } catch (err) {
-      res.status(500).json({ ok: false, error: formatSheetsError(err) });
+      const config = diagnoseSheetsConfig();
+      res.status(500).json({ ok: false, error: formatSheetsError(err), config });
     }
   })();
 });
