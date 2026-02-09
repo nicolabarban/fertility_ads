@@ -15,8 +15,6 @@ const btnRepro = document.getElementById("btnRepro");
 const manualLabel = document.getElementById("manualLabel");
 const saveManual = document.getElementById("saveManual");
 const manualStatus = document.getElementById("manualStatus");
-const modelSelect = document.getElementById("modelSelect");
-const modelInput = document.getElementById("modelInput");
 const modelLabels = document.getElementById("modelLabels");
 const groundTruthSelect = document.getElementById("groundTruthSelect");
 const accuracyStats = document.getElementById("accuracyStats");
@@ -40,12 +38,6 @@ function setStatus(message) {
 
 function setManualStatus(message) {
   manualStatus.textContent = message;
-}
-
-function getSelectedModel() {
-  const custom = modelInput.value.trim();
-  if (custom) return custom;
-  return modelSelect.value || "gpt-5.2";
 }
 
 function normalizeLabel(value) {
@@ -569,7 +561,6 @@ async function postForOutput(endpoint) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       text: state.selected.article || "",
-      model: getSelectedModel(),
       json_path: state.selected.json_path || "",
       year: state.selected.year || "",
       full_article_id: state.selected.full_article_id || "",
