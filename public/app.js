@@ -512,6 +512,7 @@ async function loadGroundTruth() {
     attachClassificationToRows();
     if (state.selected) updateModelLabels(state.selected);
     updateAccuracy();
+    renderList();
   } catch (err) {
     state.groundTruth = {};
   }
@@ -666,13 +667,7 @@ saveManual.addEventListener("click", async () => {
     setManualStatus((data && data.error) || "Failed to save.");
     return;
   }
-  const path = state.selected.json_path || "";
-  if (path) {
-    state.groundTruth[path] = normalizeLabel(label);
-    state.selected.manual_label = normalizeLabel(label);
-    updateModelLabels(state.selected);
-    updateAccuracy();
-  }
+  await loadGroundTruth();
   setManualStatus("Saved.");
 });
 
