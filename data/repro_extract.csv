@@ -1,0 +1,13 @@
+timestamp,json_path,year,full_article_id,block_id,named_brands_and_lifecycles,pricing,distribution_channels,location_manufacturing,location_purchase,type,symptoms,direction_of_use,health_warnings,order_by_post,raw_output
+2026-02-09T21:07:33.830Z,/scratch.hpc/nicola.barban2/data/AS_dataset_raw/year_1867/faro_1867/1867-04-08_p1_sn84028645_0028077473A_1867040801_0653.json,1867,1,0,Drops (Female Remedy); written signature of JOHN L. LYON required for genuine; no other lifecycle details,Not present/unclear,Sold by druggists everywhere; consultation personally or by mail (enclosing stamp); general agents (E. G. CLARK & CO.) for U.S. and Canadas,"Prepared by Dr. John L. Lyon, 195 Chapel Street, New Haven, Conn.","Druggists everywhere; New Haven, Conn. (via Dr. John L. Lyon)",clear advertisement,Female complaints; obstructions and suppressions of nature; female weaknesses; private diseases,Explicit directions folded around each bottle (when they may be used; when/why they should not be used),Directions explain when/why they should not be used; warns of effects contrary to nature's laws if used improperly,Yes (consulted by mail; enclosing stamp),"{
+  ""named_brands_and_lifecycles"": ""Drops (Female Remedy); written signature of JOHN L. LYON required for genuine; no other lifecycle details"",
+  ""pricing"": ""Not present/unclear"",
+  ""distribution_channels"": ""Sold by druggists everywhere; consultation personally or by mail (enclosing stamp); general agents (E. G. CLARK & CO.) for U.S. and Canadas"",
+  ""location_manufacturing"": ""Prepared by Dr. John L. Lyon, 195 Chapel Street, New Haven, Conn."",
+  ""location_purchase"": ""Druggists everywhere; New Haven, Conn. (via Dr. John L. Lyon)"",
+  ""type"": ""clear advertisement"",
+  ""symptoms"": ""Female complaints; obstructions and suppressions of nature; female weaknesses; private diseases"",
+  ""direction_of_use"": ""Explicit directions folded around each bottle (when they may be used; when/why they should not be used)"",
+  ""health_warnings"": ""Directions explain when/why they should not be used; warns of effects contrary to nature's laws if used improperly"",
+  ""order_by_post"": ""Yes (consulted by mail; enclosing stamp)""
+}"
