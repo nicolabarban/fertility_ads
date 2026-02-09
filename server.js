@@ -351,7 +351,7 @@ app.get("/api/ground-truth", (req, res) => {
 });
 
 app.post("/api/ground-truth", (req, res) => {
-  const allowed = new Set(["ADS_REPRO", "ART", "OTHER", "UNCLEAR"]);
+  const allowed = new Set(["ADS_REPRO", "ART", "OTHER"]);
   const label = (req.body && req.body.label) || "";
   if (!allowed.has(label)) {
     res.status(400).json({ error: "Invalid label" });
