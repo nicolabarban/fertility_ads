@@ -15,8 +15,8 @@ const btnRepro = document.getElementById("btnRepro");
 const manualLabel = document.getElementById("manualLabel");
 const saveManual = document.getElementById("saveManual");
 const manualStatus = document.getElementById("manualStatus");
-const modelSelect = document.getElementById("modelSelect");
-const modelInput = document.getElementById("modelInput");
+const manualProgressBar = document.getElementById("manualProgressBar");
+const manualProgressText = document.getElementById("manualProgressText");
 const modelLabels = document.getElementById("modelLabels");
 const groundTruthSelect = document.getElementById("groundTruthSelect");
 const accuracyStats = document.getElementById("accuracyStats");
@@ -42,10 +42,12 @@ function setManualStatus(message) {
   manualStatus.textContent = message;
 }
 
-function getSelectedModel() {
-  const custom = modelInput.value.trim();
-  if (custom) return custom;
-  return modelSelect.value || "gpt-5.2";
+function updateManualProgress() {
+  const total = state.rows.length;
+  const labeled = Object.keys(state.groundTruth).filter((key) => state.groundTruth[key]).length;
+  const percent = total ? Math.round((labeled / total) * 100) : 0;
+  manualProgressBar.style.width = `${percent}%`;
+  manualProgressText.textContent = `${labeled} labeled (${percent}%)`;
 }
 
 function normalizeLabel(value) {
@@ -491,6 +493,7 @@ async function loadClassifications() {
     attachClassificationToRows();
     if (state.selected) updateModelLabels(state.selected);
     updateAccuracy();
+    updateManualProgress();
   } catch (err) {
     state.classifications.gpt = {};
     state.classifications.gemini = {};
@@ -512,6 +515,8 @@ async function loadGroundTruth() {
     attachClassificationToRows();
     if (state.selected) updateModelLabels(state.selected);
     updateAccuracy();
+    updateManualProgress();
+    renderList();
   } catch (err) {
     state.groundTruth = {};
   }
@@ -558,6 +563,7 @@ async function loadRows() {
   renderList();
   setStatus("");
   updateAccuracy();
+  updateManualProgress();
 }
 
 async function postForOutput(endpoint) {
@@ -568,7 +574,6 @@ async function postForOutput(endpoint) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       text: state.selected.article || "",
-      model: getSelectedModel(),
       json_path: state.selected.json_path || "",
       year: state.selected.year || "",
       full_article_id: state.selected.full_article_id || "",
@@ -666,14 +671,9 @@ saveManual.addEventListener("click", async () => {
     setManualStatus((data && data.error) || "Failed to save.");
     return;
   }
-  const path = state.selected.json_path || "";
-  if (path) {
-    state.groundTruth[path] = normalizeLabel(label);
-    state.selected.manual_label = normalizeLabel(label);
-    updateModelLabels(state.selected);
-    updateAccuracy();
-  }
+  await loadGroundTruth();
   setManualStatus("Saved.");
+  updateManualProgress();
 });
 
 searchInput.addEventListener("input", applyFilter);
