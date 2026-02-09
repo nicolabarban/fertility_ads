@@ -25,6 +25,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY || "" });
 let sheetsClient = null;
+let sheetsInitError = "";
 
 function parseCSV(text) {
   const rows = [];
@@ -140,12 +141,20 @@ function ensureGroundTruthFile() {
 
 function getSheetsClient() {
   if (sheetsClient) return sheetsClient;
-  if (!SHEETS_ID || !SERVICE_ACCOUNT_JSON) return null;
+  if (!SHEETS_ID || !SERVICE_ACCOUNT_JSON) {
+    sheetsInitError = "Missing GOOGLE_SHEETS_ID or GOOGLE_SERVICE_ACCOUNT_JSON.";
+    return null;
+  }
   let creds = null;
   try {
     const raw = SERVICE_ACCOUNT_JSON.replace(/\\n/g, "\n");
     creds = JSON.parse(raw);
   } catch (err) {
+    sheetsInitError = "Failed to parse GOOGLE_SERVICE_ACCOUNT_JSON. Ensure it is a single-line JSON string.";
+    return null;
+  }
+  if (!creds.client_email || !creds.private_key) {
+    sheetsInitError = "Service account JSON is missing client_email or private_key.";
     return null;
   }
   const auth = new google.auth.JWT(
@@ -241,7 +250,10 @@ app.get("/api/ground-truth/health", (req, res) => {
       }
       const sheets = getSheetsClient();
       if (!sheets) {
-        res.status(500).json({ ok: false, error: "Failed to initialize Google Sheets client." });
+        res.status(500).json({
+          ok: false,
+          error: sheetsInitError || "Failed to initialize Google Sheets client."
+        });
         return;
       }
       await sheets.spreadsheets.values.get({
