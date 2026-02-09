@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>fertility_ads</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <img class="logo" src="genpop-logo.png" alt="GenPop logo" />
+        <div class="kicker">fertility_ads</div>
+        <h1>Historical Newspaper OCR + Ad Classification</h1>
+      </div>
+      <div class="top-actions">
+        <div class="badge" id="rowCount">Loading rows...</div>
+      </div>
+    </header>
+    <div class="notice">
+      Backend ready on Render:
+      <a href="https://fertility-ads.onrender.com" target="_blank" rel="noreferrer">fertility-ads.onrender.com</a>
+    </div>
+
+    <main class="layout">
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Articles</h2>
+          <select id="yearFilter"></select>
+          <input id="searchInput" type="search" placeholder="Search json_path, year, id" />
+        </div>
+        <select id="articleSelect" class="article-select"></select>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Selected Article</h2>
+          <div class="meta" id="articleMeta">Select an item</div>
+        </div>
+        <div class="meta-block" id="newspaperInfo"></div>
+        <div class="window" id="articleWindow">
+          <div id="articleText" class="article-text">Loading...</div>
+        </div>
+        <div class="actions">
+          <button id="btnCleanAd">Clean OCR (no ad label)</button>
+          <button id="btnRepro">Classify ADS_REPRO vs ART vs OTHER</button>
+        </div>
+        <div class="manual">
+          <div class="manual-title">Manual Ground Truth</div>
+          <div class="manual-controls">
+            <select id="manualLabel">
+              <option value="">Select label...</option>
+              <option value="ADS_REPRO">ADS_REPRO</option>
+              <option value="ART">ART</option>
+              <option value="OTHER">OTHER</option>
+            </select>
+            <button id="saveManual">Save Label</button>
+          </div>
+          <div class="manual-status" id="manualStatus"></div>
+        </div>
+        <div class="analysis-block">
+          <div class="analysis-title">Model Classifications</div>
+          <div class="analysis-lines" id="modelLabels">No model labels loaded.</div>
+        </div>
+        <div class="analysis-block">
+          <div class="analysis-title">Accuracy</div>
+          <div class="analysis-controls">
+            <select id="groundTruthSelect">
+              <option value="manual">Manual ground truth</option>
+              <option value="gemini">Gemini (output200_g1)</option>
+              <option value="gpt">GPT5.2 nano-flash (output200)</option>
+            </select>
+          </div>
+          <div class="analysis-lines" id="accuracyStats">No accuracy yet.</div>
+        </div>
+        <div class="outputs">
+          <div class="output">
+            <div class="output-header">OCR Cleaned Text</div>
+            <div class="window small" id="ocrWindow">
+              <pre id="ocrOutput">Run a classification to see output.</pre>
+            </div>
+          </div>
+          <div class="output">
+            <div class="output-header">ADS_REPRO / ART / OTHER + Explanation</div>
+            <div class="window small" id="reproWindow">
+              <div class="repro-block">
+                <div class="repro-label" id="reproLabel">Label: —</div>
+                <div class="repro-explain" id="reproExplanation">Run a classification to see output.</div>
+              </div>
+            </div>
+          </div>
+          <div class="output">
+            <div class="output-header">ADS_REPRO Details</div>
+            <div class="window small" id="extractWindow">
+              <div class="extract-block" id="reproExtract">No extraction yet.</div>
+            </div>
+          </div>
+        </div>
+        <div class="status" id="status"></div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
