@@ -15,6 +15,8 @@ const btnRepro = document.getElementById("btnRepro");
 const manualLabel = document.getElementById("manualLabel");
 const saveManual = document.getElementById("saveManual");
 const manualStatus = document.getElementById("manualStatus");
+const manualProgressBar = document.getElementById("manualProgressBar");
+const manualProgressText = document.getElementById("manualProgressText");
 const modelLabels = document.getElementById("modelLabels");
 const groundTruthSelect = document.getElementById("groundTruthSelect");
 const accuracyStats = document.getElementById("accuracyStats");
@@ -38,6 +40,14 @@ function setStatus(message) {
 
 function setManualStatus(message) {
   manualStatus.textContent = message;
+}
+
+function updateManualProgress() {
+  const total = state.rows.length;
+  const labeled = Object.keys(state.groundTruth).filter((key) => state.groundTruth[key]).length;
+  const percent = total ? Math.round((labeled / total) * 100) : 0;
+  manualProgressBar.style.width = `${percent}%`;
+  manualProgressText.textContent = `${labeled} labeled (${percent}%)`;
 }
 
 function normalizeLabel(value) {
@@ -483,6 +493,7 @@ async function loadClassifications() {
     attachClassificationToRows();
     if (state.selected) updateModelLabels(state.selected);
     updateAccuracy();
+    updateManualProgress();
   } catch (err) {
     state.classifications.gpt = {};
     state.classifications.gemini = {};
@@ -504,6 +515,7 @@ async function loadGroundTruth() {
     attachClassificationToRows();
     if (state.selected) updateModelLabels(state.selected);
     updateAccuracy();
+    updateManualProgress();
     renderList();
   } catch (err) {
     state.groundTruth = {};
@@ -551,6 +563,7 @@ async function loadRows() {
   renderList();
   setStatus("");
   updateAccuracy();
+  updateManualProgress();
 }
 
 async function postForOutput(endpoint) {
@@ -660,6 +673,7 @@ saveManual.addEventListener("click", async () => {
   }
   await loadGroundTruth();
   setManualStatus("Saved.");
+  updateManualProgress();
 });
 
 searchInput.addEventListener("input", applyFilter);
