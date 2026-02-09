@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import OpenAI from "openai";
+import { google } from "googleapis";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -14,12 +15,17 @@ const REPRO_PROMPT_PATH = path.join(__dirname, "prompts", "repro_classify_prompt
 const REPRO_EXTRACT_PROMPT_PATH = path.join(__dirname, "prompts", "repro_extract_prompt.txt");
 const GROUND_TRUTH_PATH = path.join(__dirname, "data", "ground_truth.csv");
 const REPRO_EXTRACT_PATH = path.join(__dirname, "data", "repro_extract.csv");
+const SHEETS_ID = process.env.GOOGLE_SHEETS_ID || "";
+const SHEETS_TAB = process.env.GOOGLE_SHEETS_TAB || "classification";
+const SERVICE_ACCOUNT_JSON = process.env.GOOGLE_SERVICE_ACCOUNT_JSON || "";
 
 const app = express();
 app.use(express.json({ limit: "2mb" }));
 app.use(express.static(path.join(__dirname, "public")));
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY || "" });
+let sheetsClient = null;
+let sheetsInitError = "";
 
 function parseCSV(text) {
   const rows = [];
@@ -133,6 +139,95 @@ function ensureGroundTruthFile() {
   }
 }
 
+function getSheetsClient() {
+  if (sheetsClient) return sheetsClient;
+  if (!SHEETS_ID || !SERVICE_ACCOUNT_JSON) {
+    sheetsInitError = "Missing GOOGLE_SHEETS_ID or GOOGLE_SERVICE_ACCOUNT_JSON.";
+    return null;
+  }
+  let creds = null;
+  try {
+    const raw = SERVICE_ACCOUNT_JSON.replace(/\\n/g, "\n");
+    creds = JSON.parse(raw);
+  } catch (err) {
+    sheetsInitError = "Failed to parse GOOGLE_SERVICE_ACCOUNT_JSON. Ensure it is a single-line JSON string.";
+    return null;
+  }
+  if (!creds.client_email || !creds.private_key) {
+    sheetsInitError = "Service account JSON is missing client_email or private_key.";
+    return null;
+  }
+  const auth = new google.auth.JWT(
+    creds.client_email,
+    null,
+    creds.private_key,
+    ["https://www.googleapis.com/auth/spreadsheets"]
+  );
+  sheetsClient = google.sheets({ version: "v4", auth });
+  return sheetsClient;
+}
+
+function diagnoseSheetsConfig() {
+  const status = {
+    hasSheetsId: Boolean(SHEETS_ID),
+    hasServiceJson: Boolean(SERVICE_ACCOUNT_JSON),
+    parseOk: false,
+    hasClientEmail: false,
+    hasPrivateKey: false,
+    error: ""
+  };
+  if (!status.hasSheetsId || !status.hasServiceJson) {
+    status.error = "Missing GOOGLE_SHEETS_ID or GOOGLE_SERVICE_ACCOUNT_JSON.";
+    return status;
+  }
+  try {
+    const raw = SERVICE_ACCOUNT_JSON.replace(/\\n/g, "\n");
+    const creds = JSON.parse(raw);
+    status.parseOk = true;
+    status.hasClientEmail = Boolean(creds.client_email);
+    status.hasPrivateKey = Boolean(creds.private_key);
+    if (!status.hasClientEmail || !status.hasPrivateKey) {
+      status.error = "Service account JSON missing client_email or private_key.";
+    }
+  } catch (err) {
+    status.error = "Failed to parse GOOGLE_SERVICE_ACCOUNT_JSON. Ensure it is a single-line JSON string.";
+  }
+  return status;
+}
+
+async function appendGroundTruthToSheet(row) {
+  const sheets = getSheetsClient();
+  if (!sheets) {
+    throw new Error("Google Sheets not configured");
+  }
+  await sheets.spreadsheets.values.append({
+    spreadsheetId: SHEETS_ID,
+    range: `${SHEETS_TAB}!A1`,
+    valueInputOption: "USER_ENTERED",
+    insertDataOption: "INSERT_ROWS",
+    requestBody: { values: [row] }
+  });
+}
+
+async function readGroundTruthFromSheet() {
+  const sheets = getSheetsClient();
+  if (!sheets) return null;
+  const response = await sheets.spreadsheets.values.get({
+    spreadsheetId: SHEETS_ID,
+    range: `${SHEETS_TAB}!A1:Z`
+  });
+  const values = response.data.values || [];
+  if (values.length === 0) return [];
+  const [header, ...rows] = values;
+  return rows.map((cells) => {
+    const obj = {};
+    header.forEach((key, i) => {
+      obj[key] = cells[i] ?? "";
+    });
+    return obj;
+  });
+}
+
 function ensureExtractFile() {
   if (!fs.existsSync(REPRO_EXTRACT_PATH)) {
     fs.writeFileSync(
@@ -143,6 +238,25 @@ function ensureExtractFile() {
   }
 }
 
+function formatSheetsError(err) {
+  if (!err) return "Unknown error";
+  const code = err.code || err.status || err.response?.status;
+  const message =
+    err.response?.data?.error?.message ||
+    err.message ||
+    "Unknown error";
+  if (code === 403) {
+    return `Permission denied (403). Share the sheet with the service account email. Details: ${message}`;
+  }
+  if (code === 404) {
+    return `Not found (404). Check GOOGLE_SHEETS_ID or tab name. Details: ${message}`;
+  }
+  if (code === 400) {
+    return `Bad request (400). Check GOOGLE_SHEETS_TAB and range. Details: ${message}`;
+  }
+  return `Error${code ? ` (${code})` : ""}: ${message}`;
+}
+
 app.get("/api/rows", (req, res) => {
   try {
     const rows = getRows();
@@ -150,6 +264,38 @@ app.get("/api/rows", (req, res) => {
   } catch (err) {
     res.status(500).json({ error: "Failed to load CSV" });
   }
+});
+
+app.get("/api/ground-truth/health", (req, res) => {
+  (async () => {
+    try {
+      const config = diagnoseSheetsConfig();
+      if (!config.hasSheetsId || !config.hasServiceJson || !config.parseOk || !config.hasClientEmail || !config.hasPrivateKey) {
+        res.status(500).json({
+          ok: false,
+          error: config.error || "Google Sheets not configured.",
+          config
+        });
+        return;
+      }
+      const sheets = getSheetsClient();
+      if (!sheets) {
+        res.status(500).json({
+          ok: false,
+          error: sheetsInitError || "Failed to initialize Google Sheets client."
+        });
+        return;
+      }
+      await sheets.spreadsheets.values.get({
+        spreadsheetId: SHEETS_ID,
+        range: `${SHEETS_TAB}!A1`
+      });
+      res.json({ ok: true, message: "Google Sheets connection OK.", config });
+    } catch (err) {
+      const config = diagnoseSheetsConfig();
+      res.status(500).json({ ok: false, error: formatSheetsError(err), config });
+    }
+  })();
 });
 
 app.post("/api/ocr-correct", async (req, res) => {
@@ -265,50 +411,65 @@ app.post("/api/repro-extract", async (req, res) => {
 });
 
 app.get("/api/ground-truth", (req, res) => {
-  try {
-    if (!fs.existsSync(GROUND_TRUTH_PATH)) {
-      res.json({ rows: [] });
-      return;
-    }
-    const csvText = fs.readFileSync(GROUND_TRUTH_PATH, "utf-8");
-    const [header, ...dataRows] = parseCSV(csvText);
-    const rows = dataRows.map((cells) => {
-      const obj = {};
-      header.forEach((key, i) => {
-        obj[key] = cells[i] ?? "";
+  (async () => {
+    try {
+      const sheetRows = await readGroundTruthFromSheet();
+      if (sheetRows !== null) {
+        res.json({ rows: sheetRows });
+        return;
+      }
+      if (!fs.existsSync(GROUND_TRUTH_PATH)) {
+        res.json({ rows: [] });
+        return;
+      }
+      const csvText = fs.readFileSync(GROUND_TRUTH_PATH, "utf-8");
+      const [header, ...dataRows] = parseCSV(csvText);
+      const rows = dataRows.map((cells) => {
+        const obj = {};
+        header.forEach((key, i) => {
+          obj[key] = cells[i] ?? "";
+        });
+        return obj;
       });
-      return obj;
-    });
-    res.json({ rows });
-  } catch (err) {
-    res.status(500).json({ error: "Failed to load ground truth" });
-  }
+      res.json({ rows });
+    } catch (err) {
+      res.status(500).json({ error: "Failed to load ground truth" });
+    }
+  })();
 });
 
 app.post("/api/ground-truth", (req, res) => {
-  const allowed = new Set(["ADS_REPRO", "ART", "OTHER", "UNCLEAR"]);
+  const allowed = new Set(["ADS_REPRO", "ART", "OTHER"]);
   const label = (req.body && req.body.label) || "";
   if (!allowed.has(label)) {
     res.status(400).json({ error: "Invalid label" });
     return;
   }
 
-  try {
-    ensureGroundTruthFile();
-    const timestamp = new Date().toISOString();
-    const line = [
-      timestamp,
-      (req.body && req.body.json_path) || "",
-      (req.body && req.body.year) || "",
-      (req.body && req.body.full_article_id) || "",
-      (req.body && req.body.block_id) || "",
-      label
-    ].map(csvEscape).join(",") + "\n";
-    fs.appendFileSync(GROUND_TRUTH_PATH, line, "utf-8");
-    res.json({ ok: true });
-  } catch (err) {
-    res.status(500).json({ error: "Failed to save label" });
-  }
+  (async () => {
+    try {
+      const timestamp = new Date().toISOString();
+      const row = [
+        timestamp,
+        (req.body && req.body.json_path) || "",
+        (req.body && req.body.year) || "",
+        (req.body && req.body.full_article_id) || "",
+        (req.body && req.body.block_id) || "",
+        label
+      ];
+      await appendGroundTruthToSheet(row);
+      try {
+        ensureGroundTruthFile();
+        const line = row.map(csvEscape).join(",") + "\n";
+        fs.appendFileSync(GROUND_TRUTH_PATH, line, "utf-8");
+      } catch (err) {
+        // If local backup fails, still succeed since Sheets saved.
+      }
+      res.json({ ok: true });
+    } catch (err) {
+      res.status(500).json({ error: "Failed to save label to Google Sheets" });
+    }
+  })();
 });
 
 app.listen(PORT, () => {

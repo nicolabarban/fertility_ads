@@ -7,6 +7,7 @@ A lightweight web app for viewing OCR text from `sample200.csv` and running two 
 ## Requirements
 - Node.js 18+
 - An OpenAI API key
+- A Google Sheets service account (for manual labels)
 
 ## Setup
 1. Install dependencies:
@@ -14,6 +15,10 @@ A lightweight web app for viewing OCR text from `sample200.csv` and running two 
    npm install
    ```
 2. Create a `.env` file (see `.env.example`) and set `OPENAI_API_KEY`.
+   Also set:
+   - `GOOGLE_SHEETS_ID`
+   - `GOOGLE_SHEETS_TAB` (default: `classification`)
+   - `GOOGLE_SERVICE_ACCOUNT_JSON` (single-line JSON string; share the sheet with the service account email)
 3. Start the server:
    ```bash
    npm run dev
@@ -24,6 +29,7 @@ A lightweight web app for viewing OCR text from `sample200.csv` and running two 
 - `OPENAI_MODEL` defaults to `gpt-4.1-mini` if not provided.
 - `data/sample200.csv` is loaded at runtime.
 - Prompts live in `prompts/` and are sent to the OpenAI Responses API.
+- Manual labels are appended to Google Sheets if configured; local `data/ground_truth.csv` is a best-effort backup.
 
 ## UI Notes
 - The article list shows `year | json_path`.
