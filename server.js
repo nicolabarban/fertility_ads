@@ -19,6 +19,11 @@ const REPRO_EXTRACT_PATH = path.join(DATA_DIR, "repro_extract.csv");
 const SHEETS_ID = process.env.GOOGLE_SHEETS_ID || "";
 const SHEETS_TAB = process.env.GOOGLE_SHEETS_TAB || "classification";
 const SERVICE_ACCOUNT_JSON = process.env.GOOGLE_SERVICE_ACCOUNT_JSON || "";
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN || "";
+const GITHUB_REPO = process.env.GITHUB_REPO || "";
+const GITHUB_BRANCH = process.env.GITHUB_BRANCH || "main";
+const GITHUB_GROUND_TRUTH_PATH = process.env.GITHUB_GROUND_TRUTH_PATH || "data/ground_truth.csv";
+const GITHUB_REPRO_EXTRACT_PATH = process.env.GITHUB_REPRO_EXTRACT_PATH || "data/repro_extract.csv";
 
 const app = express();
 app.use(express.json({ limit: "2mb" }));
@@ -130,6 +135,52 @@ function csvEscape(value) {
   return str;
 }
 
+function githubEnabled() {
+  return Boolean(GITHUB_TOKEN && GITHUB_REPO);
+}
+
+function encodeGitHubPath(filePath) {
+  return filePath.split("/").map(encodeURIComponent).join("/");
+}
+
+async function githubRequest(method, url, body) {
+  const headers = {
+    "User-Agent": "fertility_ads",
+    "Accept": "application/vnd.github+json",
+    "Authorization": `Bearer ${GITHUB_TOKEN}`
+  };
+  const options = { method, headers };
+  if (body) {
+    headers["Content-Type"] = "application/json";
+    options.body = JSON.stringify(body);
+  }
+  const response = await fetch(`https://api.github.com${url}`, options);
+  const text = await response.text();
+  return { ok: response.ok, status: response.status, text };
+}
+
+async function githubGetFile(filePath) {
+  const url = `/repos/${GITHUB_REPO}/contents/${encodeGitHubPath(filePath)}?ref=${encodeURIComponent(GITHUB_BRANCH)}`;
+  const res = await githubRequest("GET", url);
+  if (!res.ok) {
+    return { exists: false, status: res.status };
+  }
+  const data = JSON.parse(res.text);
+  const content = Buffer.from(data.content || "", "base64").toString("utf-8");
+  return { exists: true, sha: data.sha, content };
+}
+
+async function githubPutFile(filePath, content, sha, message) {
+  const url = `/repos/${GITHUB_REPO}/contents/${encodeGitHubPath(filePath)}`;
+  const body = {
+    message,
+    content: Buffer.from(content, "utf-8").toString("base64"),
+    branch: GITHUB_BRANCH
+  };
+  if (sha) body.sha = sha;
+  return githubRequest("PUT", url, body);
+}
+
 function ensureGroundTruthFile() {
   fs.mkdirSync(DATA_DIR, { recursive: true });
   if (!fs.existsSync(GROUND_TRUTH_PATH)) {
@@ -230,6 +281,49 @@ async function readGroundTruthFromSheet() {
   });
 }
 
+async function readGroundTruthFromGitHub() {
+  if (!githubEnabled()) return null;
+  const file = await githubGetFile(GITHUB_GROUND_TRUTH_PATH);
+  if (!file.exists) return [];
+  const [header, ...dataRows] = parseCSV(file.content);
+  return dataRows.map((cells) => {
+    const obj = {};
+    header.forEach((key, i) => {
+      obj[key] = cells[i] ?? "";
+    });
+    return obj;
+  });
+}
+
+async function appendGroundTruthToGitHub(row) {
+  if (!githubEnabled()) return false;
+  const header = "timestamp,json_path,year,full_article_id,block_id,manual_label\n";
+  const line = row.map(csvEscape).join(",") + "\n";
+  const existing = await githubGetFile(GITHUB_GROUND_TRUTH_PATH);
+  const content = (existing.exists ? existing.content : header) + line;
+  const result = await githubPutFile(
+    GITHUB_GROUND_TRUTH_PATH,
+    content,
+    existing.exists ? existing.sha : undefined,
+    "Append ground truth label"
+  );
+  return result.ok;
+}
+
+async function appendReproExtractToGitHub(line) {
+  if (!githubEnabled()) return false;
+  const header = "timestamp,json_path,year,full_article_id,block_id,named_brands_and_lifecycles,pricing,distribution_channels,location_manufacturing,location_purchase,type,symptoms,direction_of_use,health_warnings,order_by_post,raw_output\n";
+  const existing = await githubGetFile(GITHUB_REPRO_EXTRACT_PATH);
+  const content = (existing.exists ? existing.content : header) + line;
+  const result = await githubPutFile(
+    GITHUB_REPRO_EXTRACT_PATH,
+    content,
+    existing.exists ? existing.sha : undefined,
+    "Append repro extraction"
+  );
+  return result.ok;
+}
+
 function ensureExtractFile() {
   fs.mkdirSync(DATA_DIR, { recursive: true });
   if (!fs.existsSync(REPRO_EXTRACT_PATH)) {
@@ -272,6 +366,10 @@ app.get("/api/rows", (req, res) => {
 app.get("/api/ground-truth/health", (req, res) => {
   (async () => {
     try {
+      if (githubEnabled()) {
+        res.json({ ok: true, message: "GitHub storage enabled." });
+        return;
+      }
       const config = diagnoseSheetsConfig();
       if (!config.hasSheetsId || !config.hasServiceJson || !config.parseOk || !config.hasClientEmail || !config.hasPrivateKey) {
         res.status(500).json({
@@ -402,7 +500,11 @@ app.post("/api/repro-extract", async (req, res) => {
         fields.order_by_post || "Not present/unclear",
         output
       ].map(csvEscape).join(",") + "\n";
-      fs.appendFileSync(REPRO_EXTRACT_PATH, line, "utf-8");
+      if (githubEnabled()) {
+        await appendReproExtractToGitHub(line);
+      } else {
+        fs.appendFileSync(REPRO_EXTRACT_PATH, line, "utf-8");
+      }
     } catch (err) {
       // If saving fails, still return output
     }
@@ -416,6 +518,11 @@ app.post("/api/repro-extract", async (req, res) => {
 app.get("/api/ground-truth", (req, res) => {
   (async () => {
     try {
+      if (githubEnabled()) {
+        const githubRows = await readGroundTruthFromGitHub();
+        res.json({ rows: githubRows });
+        return;
+      }
       const sheetRows = await readGroundTruthFromSheet();
       if (sheetRows !== null) {
         res.json({ rows: sheetRows });
@@ -442,7 +549,7 @@ app.get("/api/ground-truth", (req, res) => {
 });
 
 app.post("/api/ground-truth", (req, res) => {
-  const allowed = new Set(["ADS_REPRO", "ART", "OTHER"]);
+  const allowed = new Set(["ADS_REPRO", "ART", "OTHER", "UNCLEAR"]);
   const label = (req.body && req.body.label) || "";
   if (!allowed.has(label)) {
     res.status(400).json({ error: "Invalid label" });
@@ -460,17 +567,26 @@ app.post("/api/ground-truth", (req, res) => {
         (req.body && req.body.block_id) || "",
         label
       ];
-      await appendGroundTruthToSheet(row);
-      try {
-        ensureGroundTruthFile();
-        const line = row.map(csvEscape).join(",") + "\n";
-        fs.appendFileSync(GROUND_TRUTH_PATH, line, "utf-8");
-      } catch (err) {
-        // If local backup fails, still succeed since Sheets saved.
+      if (githubEnabled()) {
+        const ok = await appendGroundTruthToGitHub(row);
+        if (!ok) {
+          res.status(500).json({ error: "Failed to save label to GitHub" });
+          return;
+        }
+        res.json({ ok: true, storage: "github" });
+        return;
       }
-      res.json({ ok: true });
+      if (SHEETS_ID && SERVICE_ACCOUNT_JSON) {
+        await appendGroundTruthToSheet(row);
+        res.json({ ok: true, storage: "sheets" });
+        return;
+      }
+      ensureGroundTruthFile();
+      const line = row.map(csvEscape).join(",") + "\n";
+      fs.appendFileSync(GROUND_TRUTH_PATH, line, "utf-8");
+      res.json({ ok: true, storage: "file" });
     } catch (err) {
-      res.status(500).json({ error: "Failed to save label to Google Sheets" });
+      res.status(500).json({ error: "Failed to save label" });
     }
   })();
 });
