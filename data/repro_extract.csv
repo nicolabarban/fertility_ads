@@ -35,3 +35,11 @@ timestamp,json_path,year,full_article_id,block_id,named_brands_and_lifecycles,pr
   ""health_warnings"": ""Not present/unclear"",
   ""order_by_post"": ""Not present/unclear""
 }"
+2026-02-09T22:08:07.536Z,/scratch.hpc/nicola.barban2/data/AS_dataset_raw/year_1855/faro_1855/1855-12-03_p4_sn85042002_00415660996_1855120301_1311.json,1855,1,0,Not present/unclear,Not present/unclear,Not present/unclear,Not present/unclear,Not present/unclear,Not present/unclear,Not present/unclear,Not present/unclear,Not present/unclear,Not present/unclear,"{
+  ""named_brands_and_lifecycles"": ""Dr. Rose's celebrated Family Medicines (result of thirty years practice in Philadelphia); Dr. Rose's Pain Curer; Dr. Rose's Cough Syrup/Expectorant; Dr. Rose's Whooping Cough Syrup; Dr. Rose's Croup Syrup; Dr. Rose's Nervous Cordial; Dr. Rose's Butcher Compound; Dr. Rose's Golden Pills; Dr. Rose's Female Pills; Dr. Rose's Sarsaparilla Compound; Dr. Rose's Dyspeptic and Liver Compound; Dr. Rose's Ambitious/Railroad Pills"",
+  ""pricing"": ""Pain Curer bottles 19, 25, and 50 cents; Cough Syrup bottles 50 cents and $1; Whooping Cough Syrup 50 cents; Croup Syrup 15 cents/bottle; Nervous Cordial 80 cents/bottle; Butcher Compound 80 cents/bottle; Female Pills 25 cents/box; Sarsaparilla Compound quart bottles $1, small bottles 50 cents; Dyspeptic and Liver Compound 50 cents/bottle; Ambitious/Railroad Pills 12.5 and 25 cents/box"",
+  ""distribution_channels"": ""Sold by listed dealers/druggists (D. B. Dyson; Stott & Co.; W. H. Gilman; J. W. Marin; Patterson & Marin; D. B. Clark; H. H. McPherson; W. H. Evans; Kidwell & Lawrence; J. B. Moore; J. L. Kidwell) and by all dealers in Alexandria, Virginia"",
+  ""location_manufacturing"": ""Philadelphia (implied by 'thirty years practice in Philadelphia')"",
+  ""location_purchase"": ""Washington, D.C.; Georgetown; Alexandria, Virginia"",
+  ""type"": ""clear advertisement"",
+  ""symptoms"": ""Pain (external/internal), pains in sides/limbs/back, chilblains, ague/fever and ague, lumps in breasts, corns, bruises, sprains, toothache, stomach pain, sudden colds, weak stomach and bowels; cough (from cold), consumptive cough; whooping cough; croup; nervousness/nervous affections; kidney and bladder complaints; dropsy; female complaints including falling of the womb, weakness, general"
