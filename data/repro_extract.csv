@@ -23,3 +23,15 @@ timestamp,json_path,year,full_article_id,block_id,named_brands_and_lifecycles,pr
   ""health_warnings"": ""Not present/unclear"",
   ""order_by_post"": ""Not present/unclear""
 }"
+2026-02-09T21:21:21.804Z,/scratch.hpc/nicola.barban2/data/AS_dataset_raw/year_1843/faro_1843/1843-01-19_p3_sn83030313_00271743178_1843011901_0092.json,1843,44,43,"Portuguese Female Pills (""far famed and celebrated"")",Not present/unclear,Not present/unclear,Portugal,Not present/unclear,clear advertisement,Not present/unclear,Not present/unclear,Not present/unclear,Not present/unclear,"{
+  ""named_brands_and_lifecycles"": ""Portuguese Female Pills (\""far famed and celebrated\"")"",
+  ""pricing"": ""Not present/unclear"",
+  ""distribution_channels"": ""Not present/unclear"",
+  ""location_manufacturing"": ""Portugal"",
+  ""location_purchase"": ""Not present/unclear"",
+  ""type"": ""clear advertisement"",
+  ""symptoms"": ""Not present/unclear"",
+  ""direction_of_use"": ""Not present/unclear"",
+  ""health_warnings"": ""Not present/unclear"",
+  ""order_by_post"": ""Not present/unclear""
+}"
