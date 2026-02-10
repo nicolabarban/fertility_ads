@@ -103,3 +103,15 @@ timestamp,json_path,year,full_article_id,block_id,named_brands_and_lifecycles,pr
   ""health_warnings"": ""Counterfeits sold by dishonest druggists; seek the genuine"",
   ""order_by_post"": ""Yes (One Dollar enclosed; bottle sent by return mail, securely sealed)""
 }"
+2026-02-10T10:21:53.727Z,/scratch.hpc/nicola.barban2/data/AS_dataset_raw/year_1865/faro_1865/1865-06-13_p4_sn85026002_00280775071_1865061301_0144.json,1865,6,5,"Cincinnati Venereal Hospital (Established in 1850); Dr. Bonaparte's ""Private Guide to Health""; Dr. Bonaparte's French Patent Male Safe (patent); Madame Lozier's Female Monthly Pills","Private Guide to Health: 25 cents (sent by mail); French Patent Male Safe: $1 per single, $1 per half dozen, (price per dozen unclear), sent by mail; Madame Lozier's Female Monthly Pills: price per box unclear, sent to any address by mail",Call or address Drs. Bonaparte & Reynolds; sent by mail; will answer (letters) only if they contain remittance and a postage stamp,Not present/unclear,"No. 1872 Sycamore Street, between Fifth and Sixth, east side, Cincinnati, Ohio",clear advertisement,Private diseases; gonorrhea; gleet; strictures; nocturnal emissions; seminal weakness; syphilis (primary and secondary); skin diseases; impotency; suppressions (female); venereal diseases,Not present/unclear,"Ladies should not use Madame Lozier's Female Monthly Pills during pregnancy, as they will produce miscarriage",Yes,"{
+  ""named_brands_and_lifecycles"": ""Cincinnati Venereal Hospital (Established in 1850); Dr. Bonaparte's \""Private Guide to Health\""; Dr. Bonaparte's French Patent Male Safe (patent); Madame Lozier's Female Monthly Pills"",
+  ""pricing"": ""Private Guide to Health: 25 cents (sent by mail); French Patent Male Safe: $1 per single, $1 per half dozen, (price per dozen unclear), sent by mail; Madame Lozier's Female Monthly Pills: price per box unclear, sent to any address by mail"",
+  ""distribution_channels"": ""Call or address Drs. Bonaparte & Reynolds; sent by mail; will answer (letters) only if they contain remittance and a postage stamp"",
+  ""location_manufacturing"": ""Not present/unclear"",
+  ""location_purchase"": ""No. 1872 Sycamore Street, between Fifth and Sixth, east side, Cincinnati, Ohio"",
+  ""type"": ""clear advertisement"",
+  ""symptoms"": ""Private diseases; gonorrhea; gleet; strictures; nocturnal emissions; seminal weakness; syphilis (primary and secondary); skin diseases; impotency; suppressions (female); venereal diseases"",
+  ""direction_of_use"": ""Not present/unclear"",
+  ""health_warnings"": ""Ladies should not use Madame Lozier's Female Monthly Pills during pregnancy, as they will produce miscarriage"",
+  ""order_by_post"": ""Yes""
+}"
