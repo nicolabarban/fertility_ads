@@ -115,3 +115,15 @@ timestamp,json_path,year,full_article_id,block_id,named_brands_and_lifecycles,pr
   ""health_warnings"": ""Ladies should not use Madame Lozier's Female Monthly Pills during pregnancy, as they will produce miscarriage"",
   ""order_by_post"": ""Yes""
 }"
+2026-02-10T10:34:40.959Z,/scratch.hpc/nicola.barban2/data/AS_dataset_raw/year_1857/faro_1857/1857-07-23_p2_sn85040308_00514151362_1857072301_0530.json,1857,24,23,"Prepared prescription of Sir James Clarke, Physician Extraordinary to the Queen; Pills",Not present/unclear,Sole agent for the United States and Canada (Job Moses); by return mail; for sale by druggists generally throughout the United States; authorized agents,Not present/unclear,"Rochester, N.Y.; available via named sellers/agents incl. Staskwensher & Co.; A. E. Steele; E. Clark & Son; Knoxville (location implied)",clear advertisement,Painful and dangerous diseases incident to the female constitution; moderates excess; irregular monthly period; nervous and spinal affections; pain in back and limbs; heaviness; fatigue; palpitation of the heart; lowness of spirits; hysteria; sick headache; whites; disorders caused by disordered system; to lessen suffering during confinement,Should be used three previous to confinement; full directions accompany each package,Should not be taken by females during the first three months of pregnancy (may bring miscarriage),Ordering by return mail mentioned (with stamps enclosed),"{
+  ""named_brands_and_lifecycles"": ""Prepared prescription of Sir James Clarke, Physician Extraordinary to the Queen; Pills"",
+  ""pricing"": ""Not present/unclear"",
+  ""distribution_channels"": ""Sole agent for the United States and Canada (Job Moses); by return mail; for sale by druggists generally throughout the United States; authorized agents"",
+  ""location_manufacturing"": ""Not present/unclear"",
+  ""location_purchase"": ""Rochester, N.Y.; available via named sellers/agents incl. Staskwensher & Co.; A. E. Steele; E. Clark & Son; Knoxville (location implied)"",
+  ""type"": ""clear advertisement"",
+  ""symptoms"": ""Painful and dangerous diseases incident to the female constitution; moderates excess; irregular monthly period; nervous and spinal affections; pain in back and limbs; heaviness; fatigue; palpitation of the heart; lowness of spirits; hysteria; sick headache; whites; disorders caused by disordered system; to lessen suffering during confinement"",
+  ""direction_of_use"": ""Should be used three previous to confinement; full directions accompany each package"",
+  ""health_warnings"": ""Should not be taken by females during the first three months of pregnancy (may bring miscarriage)"",
+  ""order_by_post"": ""Ordering by return mail mentioned (with stamps enclosed)""
+}"
