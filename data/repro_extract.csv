@@ -67,3 +67,15 @@ timestamp,json_path,year,full_article_id,block_id,named_brands_and_lifecycles,pr
   ""health_warnings"": ""Claims \""No poisons or harsh medicines\""; otherwise not present/unclear"",
   ""order_by_post"": ""Yes—pills sent by mail/express upon payment; treatment by correspondence/letter and address to post office box""
 }"
+2026-02-10T09:37:32.672Z,/scratch.hpc/nicola.barban2/data/AS_dataset_raw/year_1856/faro_1856/1856-10-09_p2_sn83021205_00517171931_1856100901_0818.json,1856,70,69,"CLARKE'S FEMALE PILLS; ""The Great English Remedy""; bears Government stamp of Great Britain (anti-counterfeit)","Each bottle, price One Dollar; $1 and six postage stamps enclosed","For sale by druggists/dealers generally; authorized agents; sole agents for U.S. and Canada (J. Q. Baldwin & Co., Rochester, N.Y.); general agents (Hulie Moses, Auburn, N.Y.); sent by mail",Great Britain (Government stamp of Great Britain mentioned),"Rochester, N.Y.; Auburn, N.Y.; ""for sale by one druggist in every city"" (unspecified)",clear advertisement,Painful and dangerous disorders to which the female system is subject; moderates excess; brings on the monthly period with regularity,Not present/unclear,Should not be taken by females pregnant during the first three months (risk of miscarriage); otherwise stated as safe,Yes,"{
+  ""named_brands_and_lifecycles"": ""CLARKE'S FEMALE PILLS; \""The Great English Remedy\""; bears Government stamp of Great Britain (anti-counterfeit)"",
+  ""pricing"": ""Each bottle, price One Dollar; $1 and six postage stamps enclosed"",
+  ""distribution_channels"": ""For sale by druggists/dealers generally; authorized agents; sole agents for U.S. and Canada (J. Q. Baldwin & Co., Rochester, N.Y.); general agents (Hulie Moses, Auburn, N.Y.); sent by mail"",
+  ""location_manufacturing"": ""Great Britain (Government stamp of Great Britain mentioned)"",
+  ""location_purchase"": ""Rochester, N.Y.; Auburn, N.Y.; \""for sale by one druggist in every city\"" (unspecified)"",
+  ""type"": ""clear advertisement"",
+  ""symptoms"": ""Painful and dangerous disorders to which the female system is subject; moderates excess; brings on the monthly period with regularity"",
+  ""direction_of_use"": ""Not present/unclear"",
+  ""health_warnings"": ""Should not be taken by females pregnant during the first three months (risk of miscarriage); otherwise stated as safe"",
+  ""order_by_post"": ""Yes""
+}"
