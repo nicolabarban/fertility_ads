@@ -38,3 +38,4 @@ timestamp,json_path,year,full_article_id,block_id,manual_label
 2026-02-10T09:46:52.575Z,/scratch.hpc/nicola.barban2/data/AS_dataset_raw/year_1909/faro_1909/1909-02-20_p1_sn89051168_00393343278_1909022001_0463.json,1909,7,6,OTHER
 2026-02-10T09:52:57.414Z,/scratch.hpc/nicola.barban2/data/AS_dataset_raw/year_1904/faro_1904/1904-05-03_p4_sn85038485_00340583541_1904050301_0039.json,1904,9,8,ART
 2026-02-10T10:02:14.848Z,/scratch.hpc/nicola.barban2/data/AS_dataset_raw/year_1882/faro_1882/1882-11-02_p4_sn83008556_00296028526_1882110201_0574.json,1882,59,58,OTHER
+2026-02-10T10:06:19.179Z,/scratch.hpc/nicola.barban2/data/AS_dataset_raw/year_1872/faro_1872/1872-03-30_p2_sn92053941_00295873590_1872033001_0624.json,1872,27,26,ADS_REPRO
