@@ -91,3 +91,15 @@ timestamp,json_path,year,full_article_id,block_id,named_brands_and_lifecycles,pr
   ""health_warnings"": ""Not present/unclear"",
   ""order_by_post"": ""Not present/unclear""
 }"
+2026-02-10T10:06:27.666Z,/scratch.hpc/nicola.barban2/data/AS_dataset_raw/year_1872/faro_1872/1872-03-30_p2_sn92053941_00295873590_1872033001_0624.json,1872,27,26,Sir James Clarke's Female Pills; Genuine vs counterfeited/contaminated; Sole Proprietor Job Moses,One Dollar for a bottle containing Fifty Pills,Druggists; direct from Sole Proprietor (sealed/discreet); circulars sent free to those writing for them,Not present/unclear,New York (81 Cortlandt Street) via Sole Proprietor; also via druggists (location not specified),clear advertisement,Painful and dangerous diseases to which the female constitution is subject; obstructions; irregular monthly period; nervous and spinal affections; pains in back and limbs; fatigue on slight exertion; palpitation of the heart; hysteria; whites,Circulars around each package give full directions and advice,Counterfeits sold by dishonest druggists; seek the genuine,"Yes (One Dollar enclosed; bottle sent by return mail, securely sealed)","{
+  ""named_brands_and_lifecycles"": ""Sir James Clarke's Female Pills; Genuine vs counterfeited/contaminated; Sole Proprietor Job Moses"",
+  ""pricing"": ""One Dollar for a bottle containing Fifty Pills"",
+  ""distribution_channels"": ""Druggists; direct from Sole Proprietor (sealed/discreet); circulars sent free to those writing for them"",
+  ""location_manufacturing"": ""Not present/unclear"",
+  ""location_purchase"": ""New York (81 Cortlandt Street) via Sole Proprietor; also via druggists (location not specified)"",
+  ""type"": ""clear advertisement"",
+  ""symptoms"": ""Painful and dangerous diseases to which the female constitution is subject; obstructions; irregular monthly period; nervous and spinal affections; pains in back and limbs; fatigue on slight exertion; palpitation of the heart; hysteria; whites"",
+  ""direction_of_use"": ""Circulars around each package give full directions and advice"",
+  ""health_warnings"": ""Counterfeits sold by dishonest druggists; seek the genuine"",
+  ""order_by_post"": ""Yes (One Dollar enclosed; bottle sent by return mail, securely sealed)""
+}"
