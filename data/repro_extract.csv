@@ -43,3 +43,15 @@ timestamp,json_path,year,full_article_id,block_id,named_brands_and_lifecycles,pr
   ""location_purchase"": ""Washington, D.C.; Georgetown; Alexandria, Virginia"",
   ""type"": ""clear advertisement"",
   ""symptoms"": ""Pain (external/internal), pains in sides/limbs/back, chilblains, ague/fever and ague, lumps in breasts, corns, bruises, sprains, toothache, stomach pain, sudden colds, weak stomach and bowels; cough (from cold), consumptive cough; whooping cough; croup; nervousness/nervous affections; kidney and bladder complaints; dropsy; female complaints including falling of the womb, weakness, general"
+2026-02-10T07:53:21.337Z,/scratch.hpc/nicola.barban2/data/AS_dataset_raw/year_1864/faro_1864/1864-07-06_p1_sn85025182_00212477898_1864070601_0010.json,1864,10,9,"Bell's Specific Pills (original and only genuine); Dr. Bell's Treatise (""Fiftieth Thousand""); Dr. Harvey's Female Pills",Not present/unclear,"Sent by mail, securely sealed and confidentially; consulting physician (J. Bryan, M.D.) will send treatise free (two stamps for postage)",Not present/unclear,"No. 76 Cedar Street, New York",clear advertisement,Spermatorrhea/seminal weakness; urethral and vaginal discharges; the whites; nightly/involuntary emissions; incontinence; genital debility/irritability; impotence; weakness/loss of power; nervous debility; gonorrhea; gleet; strictures; bladder and kidney diseases; (ladies) menstrual obstruction/stoppage; prolapsus uteri; spinal affections,Relief expected by taking a single box,Claims: does not nauseate; no change of diet required; will not interfere with business; can be used without detection; composition said to be entirely vegetable and harmless,Yes—sent by mail on receipt of money; treatise sent free in sealed envelope (two stamps for postage),"{
+  ""named_brands_and_lifecycles"": ""Bell's Specific Pills (original and only genuine); Dr. Bell's Treatise (\""Fiftieth Thousand\""); Dr. Harvey's Female Pills"",
+  ""pricing"": ""Not present/unclear"",
+  ""distribution_channels"": ""Sent by mail, securely sealed and confidentially; consulting physician (J. Bryan, M.D.) will send treatise free (two stamps for postage)"",
+  ""location_manufacturing"": ""Not present/unclear"",
+  ""location_purchase"": ""No. 76 Cedar Street, New York"",
+  ""type"": ""clear advertisement"",
+  ""symptoms"": ""Spermatorrhea/seminal weakness; urethral and vaginal discharges; the whites; nightly/involuntary emissions; incontinence; genital debility/irritability; impotence; weakness/loss of power; nervous debility; gonorrhea; gleet; strictures; bladder and kidney diseases; (ladies) menstrual obstruction/stoppage; prolapsus uteri; spinal affections"",
+  ""direction_of_use"": ""Relief expected by taking a single box"",
+  ""health_warnings"": ""Claims: does not nauseate; no change of diet required; will not interfere with business; can be used without detection; composition said to be entirely vegetable and harmless"",
+  ""order_by_post"": ""Yes—sent by mail on receipt of money; treatise sent free in sealed envelope (two stamps for postage)""
+}"
