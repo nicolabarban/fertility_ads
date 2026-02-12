@@ -139,3 +139,15 @@ timestamp,json_path,year,full_article_id,block_id,named_brands_and_lifecycles,pr
   ""health_warnings"": ""Not present/unclear"",
   ""order_by_post"": ""Mailed; sent on receipt of price""
 }"
+2026-02-12T11:17:57.219Z,/scratch.hpc/nicola.barban2/data/AS_dataset_raw/year_1861/faro_1861/1861-01-26_p2_sn84026845_00202190674_1861012601_0093.json,1861,33,32,Humphreys' Specific Homeopathic Female Pills; Humphreys' Homeopathic Specifics (case/sets); Brentlinger's Sarsaparilla & Dandelion,Female Pills: six boxes for $1; single boxes 25 cts. Humphreys' Homeopathic Specifics set: $5 (morocco case); $1 (plain case); case of 48 boxes and book: $9,Sent by mail or express (postage free) on receipt of price; sold by local sellers; sold by druggists generally,"Brentlinger's Sarsaparilla & Dandelion prepared by Y. A. Brentlinger, Market St., No. 161, Wheeling, Va.","Sold by Landrill in Bushfield, James No. 4 Main St.; sold by Reed & Kirt, Centre Wheeling; J. H. Logan Co., Main St.; druggists generally",clear advertisement,Female weakness/derangements; leucorrhoea; constant lassitude; prostration; weak back; general debility,Not present/unclear,Not present/unclear,Yes (sent by mail on receipt of price),"{
+  ""named_brands_and_lifecycles"": ""Humphreys' Specific Homeopathic Female Pills; Humphreys' Homeopathic Specifics (case/sets); Brentlinger's Sarsaparilla & Dandelion"",
+  ""pricing"": ""Female Pills: six boxes for $1; single boxes 25 cts. Humphreys' Homeopathic Specifics set: $5 (morocco case); $1 (plain case); case of 48 boxes and book: $9"",
+  ""distribution_channels"": ""Sent by mail or express (postage free) on receipt of price; sold by local sellers; sold by druggists generally"",
+  ""location_manufacturing"": ""Brentlinger's Sarsaparilla & Dandelion prepared by Y. A. Brentlinger, Market St., No. 161, Wheeling, Va."",
+  ""location_purchase"": ""Sold by Landrill in Bushfield, James No. 4 Main St.; sold by Reed & Kirt, Centre Wheeling; J. H. Logan Co., Main St.; druggists generally"",
+  ""type"": ""clear advertisement"",
+  ""symptoms"": ""Female weakness/derangements; leucorrhoea; constant lassitude; prostration; weak back; general debility"",
+  ""direction_of_use"": ""Not present/unclear"",
+  ""health_warnings"": ""Not present/unclear"",
+  ""order_by_post"": ""Yes (sent by mail on receipt of price)""
+}"
