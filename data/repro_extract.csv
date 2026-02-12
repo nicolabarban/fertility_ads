@@ -151,3 +151,15 @@ timestamp,json_path,year,full_article_id,block_id,named_brands_and_lifecycles,pr
   ""health_warnings"": ""Not present/unclear"",
   ""order_by_post"": ""Yes (sent by mail on receipt of price)""
 }"
+2026-02-12T15:02:36.722Z,/scratch.hpc/nicola.barban2/data/AS_dataset_raw/year_1871/faro_1871/1871-07-20_p4_sn89058302_00212470417_1871072001_0485.json,1871,38,37,DR. J. Bradfeld's Female Regulator; medicine used/known for the last twenty years,Not present/unclear,Not present/unclear,"Atlanta, Ga.",Not present/unclear,clear advertisement,"Bring on the menses; relieve pains at monthly period; rheumatism and neuralgia of back and uterus; leucorrhoea (""whites""); partial prolapsus uteri; check excessive flow; correct irregularities peculiar to ladies; irritation of kidneys and bladder; costiveness; purify blood; clear skin; give tone and strength",Not present/unclear,Not present/unclear,Not present/unclear,"{
+  ""named_brands_and_lifecycles"": ""DR. J. Bradfeld's Female Regulator; medicine used/known for the last twenty years"",
+  ""pricing"": ""Not present/unclear"",
+  ""distribution_channels"": ""Not present/unclear"",
+  ""location_manufacturing"": ""Atlanta, Ga."",
+  ""location_purchase"": ""Not present/unclear"",
+  ""type"": ""clear advertisement"",
+  ""symptoms"": ""Bring on the menses; relieve pains at monthly period; rheumatism and neuralgia of back and uterus; leucorrhoea (\""whites\""); partial prolapsus uteri; check excessive flow; correct irregularities peculiar to ladies; irritation of kidneys and bladder; costiveness; purify blood; clear skin; give tone and strength"",
+  ""direction_of_use"": ""Not present/unclear"",
+  ""health_warnings"": ""Not present/unclear"",
+  ""order_by_post"": ""Not present/unclear""
+}"
