@@ -163,3 +163,15 @@ timestamp,json_path,year,full_article_id,block_id,named_brands_and_lifecycles,pr
   ""health_warnings"": ""Not present/unclear"",
   ""order_by_post"": ""Not present/unclear""
 }"
+2026-02-13T09:45:10.909Z,/scratch.hpc/nicola.barban2/data/AS_dataset_raw/year_1899/faro_1899/1899-11-14_p2_sn84020355_00279554863_1899111401_1072.json,1899,4,3,FRENCH TANSY WATERS; imported from Paris; genuine in red wrappers with crown trade mark,Price $1,For sale by all druggists; sent direct by La France Drug Co. on receipt of price,Paris (imported from Paris),"All druggists; La France Drug Co., 506 Turk St., San Francisco",clear advertisement,Irregular and painful periods,Not present/unclear,Take nothing else from the druggists; insist on the genuine (red wrappers with crown trade mark),Yes (sent direct on receipt of the price),"{
+  ""named_brands_and_lifecycles"": ""FRENCH TANSY WATERS; imported from Paris; genuine in red wrappers with crown trade mark"",
+  ""pricing"": ""Price $1"",
+  ""distribution_channels"": ""For sale by all druggists; sent direct by La France Drug Co. on receipt of price"",
+  ""location_manufacturing"": ""Paris (imported from Paris)"",
+  ""location_purchase"": ""All druggists; La France Drug Co., 506 Turk St., San Francisco"",
+  ""type"": ""clear advertisement"",
+  ""symptoms"": ""Irregular and painful periods"",
+  ""direction_of_use"": ""Not present/unclear"",
+  ""health_warnings"": ""Take nothing else from the druggists; insist on the genuine (red wrappers with crown trade mark)"",
+  ""order_by_post"": ""Yes (sent direct on receipt of the price)""
+}"
