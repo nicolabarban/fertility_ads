@@ -187,3 +187,15 @@ timestamp,json_path,year,full_article_id,block_id,named_brands_and_lifecycles,pr
   ""health_warnings"": ""Not present/unclear"",
   ""order_by_post"": ""Yes (send stamps for particulars/\""Hints for Ladies\"" by return letter)""
 }"
+2026-02-17T13:55:57.074Z,/scratch.hpc/nicola.barban2/data/AS_dataset_raw/year_1904/faro_1904/1904-02-04_p9_sn84020645_00513683996_1904020401_0393.json,1904,5,4,Feminala (prescription of an eminent specialist),$1.00 bottle; sample bottle and book free upon request,Sold/recommended/guaranteed by druggists; mailed in plain sealed package upon request,Not present/unclear,Not present/unclear,clear advertisement,Suppressed/profuse/scanty/painful/delayed/irregular menstruation; whites; falling of the womb; green sickness; inflammation/ulceration of the womb; change of life disorders; ailments/diseases of pregnancy; threatened miscarriage; barrenness; nervousness; pains; headache; hysteria; anaemia; impure blood; rough/discolored skin; blotches,Not present/unclear,Not present/unclear,Yes—sample bottle and book mailed in plain sealed package free upon request,"{
+  ""named_brands_and_lifecycles"": ""Feminala (prescription of an eminent specialist)"",
+  ""pricing"": ""$1.00 bottle; sample bottle and book free upon request"",
+  ""distribution_channels"": ""Sold/recommended/guaranteed by druggists; mailed in plain sealed package upon request"",
+  ""location_manufacturing"": ""Not present/unclear"",
+  ""location_purchase"": ""Not present/unclear"",
+  ""type"": ""clear advertisement"",
+  ""symptoms"": ""Suppressed/profuse/scanty/painful/delayed/irregular menstruation; whites; falling of the womb; green sickness; inflammation/ulceration of the womb; change of life disorders; ailments/diseases of pregnancy; threatened miscarriage; barrenness; nervousness; pains; headache; hysteria; anaemia; impure blood; rough/discolored skin; blotches"",
+  ""direction_of_use"": ""Not present/unclear"",
+  ""health_warnings"": ""Not present/unclear"",
+  ""order_by_post"": ""Yes—sample bottle and book mailed in plain sealed package free upon request""
+}"
