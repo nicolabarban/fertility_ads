@@ -175,3 +175,15 @@ timestamp,json_path,year,full_article_id,block_id,named_brands_and_lifecycles,pr
   ""health_warnings"": ""Take nothing else from the druggists; insist on the genuine (red wrappers with crown trade mark)"",
   ""order_by_post"": ""Yes (sent direct on receipt of the price)""
 }"
+2026-02-17T13:45:08.222Z,/scratch.hpc/nicola.barban2/data/AS_dataset_raw/year_1900/faro_1900/1900-03-27_p2_sn86071779_00175031431_1900032701_0924.json,1900,83,82,Chichester's English Pennyroyal Pills; Chichester Chemical Co.,Not present/unclear,Any druggist; send stamps for particulars (discreet/letter by return implied),"Philadelphia, Pa.",Not present/unclear,clear advertisement,Not present/unclear,Take no other,Not present/unclear,"Yes (send stamps for particulars/""Hints for Ladies"" by return letter)","{
+  ""named_brands_and_lifecycles"": ""Chichester's English Pennyroyal Pills; Chichester Chemical Co."",
+  ""pricing"": ""Not present/unclear"",
+  ""distribution_channels"": ""Any druggist; send stamps for particulars (discreet/letter by return implied)"",
+  ""location_manufacturing"": ""Philadelphia, Pa."",
+  ""location_purchase"": ""Not present/unclear"",
+  ""type"": ""clear advertisement"",
+  ""symptoms"": ""Not present/unclear"",
+  ""direction_of_use"": ""Take no other"",
+  ""health_warnings"": ""Not present/unclear"",
+  ""order_by_post"": ""Yes (send stamps for particulars/\""Hints for Ladies\"" by return letter)""
+}"
